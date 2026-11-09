@@ -1,0 +1,62 @@
+[project]
+name = "devoto-catolico-backend"
+version = "0.1.0"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "alembic>=1.20.1",
+    "asyncpg>=0.32.0",
+    "fastapi>=0.162.2",
+    "pydantic-settings>=2.16.2",
+    "sqlalchemy[asyncio]>=2.1.8",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E","F","I","B","C90","PL","S","UP","SIM","RET"]
+ignore = ["S101"]
+[tool.ruff.lint.mccabe]
+max-complexity = 15
+[tool.ruff.lint.pylint]
+max-args = 5
+max-branches = 12
+max-statements = 50
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S","PLR2004"]
+
+[tool.mypy]
+strict = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.importlinter]
+root_package = "app"
+include_external_packages = true
+[[tool.importlinter.contracts]]
+name = "Capas del módulo oraciones"
+type = "layers"
+layers = ["app.modules.oraciones.router","app.modules.oraciones.service","app.modules.oraciones.repository","app.modules.oraciones.models"]
+[[tool.importlinter.contracts]]
+name = "Servicio sin framework HTTP"
+type = "forbidden"
+source_modules = ["app.modules.oraciones.service","app.modules.oraciones.repository","app.modules.oraciones.models"]
+forbidden_modules = ["fastapi"]
+
+[dependency-groups]
+dev = [
+    "aiosqlite>=0.22.1",
+    "bandit>=1.9.4",
+    "httpx>=0.28.1",
+    "import-linter>=2.16",
+    "mypy>=2.4.1",
+    "pip-audit>=2.10.1",
+    "pytest>=9.2.0",
+    "pytest-asyncio>=1.4.1.post1",
+    "ruff>=0.17.4",
+]

@@ -1,0 +1,94 @@
+<!doctype html>
+<!--
+  REFERENCIA DE DISEÑO · no es código de producción
+  Pantalla del lienzo: PanelNav.dc.html
+  Ruta en la app: (componente o referencia, sin ruta propia)
+  Cómo leer este archivo y cómo implementarlo: docs/design/AGENTS.md
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Menú del panel</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="box-sizing: border-box; width: 100%; padding: 20px 16px; display: flex; flex-direction: column; gap: 20px; font-family: Inter, system-ui, sans-serif; color: #2B2622; background: #FFFFFF">
+  <div style="display: flex; flex-direction: column; gap: 2px; padding: 0 8px">
+    <span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; font-weight: 600; color: #7A2E3A">[Nombre]</span>
+    <span style="font-size: 13px; color: #6B6258">Tu espacio</span>
+  </div>
+  <nav aria-label="Panel" style="display: flex; flex-direction: column; gap: 16px">
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <span style="padding: 0 12px 4px; font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #6B6258">Mi espacio</span>
+      <sc-for list="{{mine}}" as="l" hint-placeholder-count="4">
+        <a href="{{l.href}}" aria-current="{{l.current}}" style="{{l.style}}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="{{l.iconColor}}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{l.icon}}"></path></svg>
+          <span style="flex: 1">{{l.label}}</span>
+        </a>
+      </sc-for>
+    </div>
+    <sc-if value="{{showModeration}}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <span style="padding: 0 12px 4px; font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #6B6258">Moderación</span>
+        <sc-for list="{{mod}}" as="l" hint-placeholder-count="2">
+          <a href="{{l.href}}" aria-current="{{l.current}}" style="{{l.style}}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="{{l.iconColor}}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{l.icon}}"></path></svg>
+            <span style="flex: 1">{{l.label}}</span>
+            <sc-if value="{{l.hasBadge}}" hint-placeholder-val="{{ false }}">
+              <span style="min-width: 24px; height: 24px; padding: 0 6px; box-sizing: border-box; border-radius: 12px; background: #FBEFD9; color: #6B4104; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center">{{l.badge}}</span>
+            </sc-if>
+          </a>
+        </sc-for>
+      </div>
+    </sc-if>
+  </nav>
+  <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 8px 0; border-top: 1px solid #E3DACB">
+    <span style="font-size: 14px; font-weight: 600">[Nombre del usuario]</span>
+    <span style="font-size: 13px; color: #6B6258">{{roleLabel}}</span>
+    <a href="/" style="display: flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 600; color: #7A2E3A">Ver sitio público</a>
+    <a href="/ingresar" style="display: flex; align-items: center; min-height: 44px; font-size: 14px; color: #2B2622">Cerrar sesión</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"current":{"editor":"enum","options":["inicio","oraciones","secuencias","novenas","revision","usuarios"],"default":"inicio"},"role":{"editor":"enum","options":["usuario","revisor","admin"],"default":"usuario"},"$preview":{"width":248,"height":620}}'>
+class Component extends DCLogic {
+renderVals() {
+const cur = this.props.current ?? 'inicio';
+const role = this.props.role ?? 'usuario';
+const base = 'display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 8px; color: #2B2622; font-size: 15px; text-decoration: none;';
+const map = (x) => {
+const on = x[0] === cur;
+return {
+label: x[1], href: x[2], icon: x[3], badge: x[4] || '', hasBadge: !!x[4],
+current: on ? 'page' : null,
+iconColor: on ? '#7A2E3A' : '#6B6258',
+style: base + (on ? ' background: #F2EDE4; font-weight: 600;' : '')
+};
+};
+const mine = [
+['inicio', 'Inicio', '/panel', 'M3 11l9-7 9 7M5 10v10h5v-6h4v6h5V10'],
+['oraciones', 'Oraciones', '/panel/oraciones', 'M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 13h8M8 17h5'],
+['secuencias', 'Secuencias', '/panel/secuencias', 'M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01'],
+['novenas', 'Novenas', '/panel/novenas', 'M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM3 10h18M8 3v4M16 3v4']
+];
+const mod = [['revision', 'Cola de revisión', '/panel/revision', 'M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9', '3']];
+if (role === 'admin') mod.push(['usuarios', 'Usuarios', '/panel/usuarios', 'M12.5 8a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0zM2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18.5 20a6.5 6.5 0 0 0-3-5.5']);
+const labels = { usuario: 'Usuario', revisor: 'Revisor', admin: 'Administrador' };
+return {
+mine: mine.map(map),
+mod: mod.map(map),
+showModeration: role !== 'usuario',
+roleLabel: labels[role]
+};
+}
+}
+</script>
+</body>
+</html>

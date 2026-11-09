@@ -1,0 +1,176 @@
+<!doctype html>
+<!--
+  REFERENCIA DE DISEÑO · no es código de producción
+  Pantalla del lienzo: ContenidoPublicado.dc.html
+  Ruta en la app: /panel/oraciones/ID-PUBLICADA
+  Cómo leer este archivo y cómo implementarlo: docs/design/AGENTS.md
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Panel · Contenido publicado</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#7A2E3A}a:hover{color:#63232E}
+</style>
+</helmet>
+<div style="min-height: 100vh; box-sizing: border-box; background: #FAF7F2; color: #2B2622; font-family: Inter, system-ui, sans-serif; display: flex; flex-wrap: wrap">
+  <div style="flex: 1 1 248px; background: #FFFFFF; border-right: 1px solid #E3DACB">
+    <dc-import name="PanelNav" current="oraciones" role="usuario" hint-size="100%,620px"></dc-import>
+  </div>
+
+  <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: clamp(20px, 3vw, 32px) clamp(16px, 3vw, 40px) 40px; display: flex; flex-direction: column; gap: 20px">
+    <nav aria-label="Ruta" style="display: flex; flex-wrap: wrap; gap: 6px; font-size: 14px; color: #6B6258">
+      <a href="/panel/oraciones" style="color: #6B6258">Mis oraciones</a><span aria-hidden="true">/</span><span aria-current="page">Oración a San Miguel Arcángel</span>
+    </nav>
+
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+        <h1 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 30px">Oración a San Miguel Arcángel</h1>
+        <span style="{{badge}}"><span aria-hidden="true" style="{{dot}}"></span>{{statusLabel}}</span>
+      </div>
+      <sc-if value="{{active}}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; flex-wrap: wrap; gap: 10px">
+          <a href="/oraciones/oracion-a-san-miguel-arcangel" style="display: flex; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #D6CBB8; border-radius: 10px; background: #FFFFFF; color: #2B2622; font-size: 15px; font-weight: 600; text-decoration: none">Ver como público</a>
+          <a href="/panel/oraciones/ID-PRIVADA" style="display: flex; align-items: center; height: 44px; padding: 0 16px; border-radius: 10px; background: #7A2E3A; color: #FFFFFF; font-size: 15px; font-weight: 600; text-decoration: none">Editar cambios</a>
+        </div>
+      </sc-if>
+    </div>
+
+    <sc-if value="{{active}}" hint-placeholder-val="{{ true }}">
+      <div role="status" style="padding: 12px 16px; background: #FFFFFF; border: 1px solid #E3DACB; border-radius: 10px; font-size: 15px; line-height: 1.5">El público ve la <strong style="font-weight: 600">versión 1</strong>. Tus cambios (versión 2) están en revisión desde ayer; cuando se aprueben, reemplazarán a la versión 1.</div>
+    </sc-if>
+    <sc-if value="{{archived}}" hint-placeholder-val="{{ false }}">
+      <div role="status" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; background: #E6E9EC; border-radius: 10px; color: #3E454C; font-size: 15px">
+        <span>Archivada. Ya no aparece en el buscador y sus enlaces muestran "ya no disponible".</span>
+        <button type="button" onClick="{{restore}}" style="min-height: 44px; padding: 0 14px; border: 1px solid #A9B0B7; border-radius: 8px; background: #FFFFFF; color: #3E454C; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Restaurar</button>
+      </div>
+    </sc-if>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+      <div style="flex: 999 1 460px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+        <section aria-labelledby="publicada" style="display: flex; flex-direction: column; gap: 10px; padding: clamp(20px, 3vw, 28px); background: #FFFFFF; border: 1px solid #E3DACB; border-radius: 12px">
+          <h2 id="publicada" style="margin: 0; font-size: 15px; font-weight: 600; color: #6B6258">Lo que ve el público · versión 1</h2>
+          <p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 19px; line-height: 1.8">San Miguel Arcángel, defiéndenos en la lucha. Sé nuestro amparo contra la perversidad y asechanzas del demonio. Que Dios manifieste sobre él su poder, es nuestra humilde súplica…</p>
+          <span style="font-size: 13px; color: #6B6258">Fuente: tradicional (atribuida a León XIII)</span>
+        </section>
+
+        <section aria-labelledby="versiones" style="display: flex; flex-direction: column; gap: 10px; padding: clamp(20px, 3vw, 28px); background: #FFFFFF; border: 1px solid #E3DACB; border-radius: 12px">
+          <h2 id="versiones" style="margin: 0; font-size: 15px; font-weight: 600">Versiones</h2>
+          <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column">
+            <li style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 0; border-bottom: 1px solid #EFE8DC">
+              <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">Versión 2</span><span style="font-size: 13px; color: #6B6258">Enviada ayer · esperando revisión</span></span>
+              <span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 13px; background: #FBEFD9; color: #6B4104; font-size: 13px; font-weight: 600"><span aria-hidden="true" style="display: block; width: 7px; height: 7px; border-radius: 50%; background: #A8680A"></span>En revisión</span>
+            </li>
+            <li style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 0">
+              <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">Versión 1</span><span style="font-size: 13px; color: #6B6258">Aprobada hace 1 semana por [Revisor 1]</span></span>
+              <span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 13px; background: #E3F0E5; color: #24532F; font-size: 13px; font-weight: 600"><span aria-hidden="true" style="display: block; width: 7px; height: 7px; border-radius: 50%; background: #2F6B3F"></span>Publicada</span>
+            </li>
+          </ol>
+        </section>
+      </div>
+
+      <aside style="flex: 1 1 320px; display: flex; flex-direction: column; gap: 16px">
+        <section aria-labelledby="compartir" style="display: flex; flex-direction: column; gap: 14px; padding: 18px; background: #FFFFFF; border: 1px solid #E3DACB; border-radius: 12px">
+          <h2 id="compartir" style="margin: 0; font-size: 17px; font-weight: 600">Compartir</h2>
+          <fieldset disabled="{{archived}}" style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 4px">
+            <legend style="font-size: 14px; font-weight: 600; color: #6B6258; margin-bottom: 6px">Dónde se ve</legend>
+            <label style="display: flex; align-items: flex-start; gap: 10px; min-height: 44px; font-size: 15px; line-height: 1.5; cursor: pointer">
+              <input type="radio" name="vis" checked="{{listed}}" onChange="{{pickListed}}" style="width: 20px; height: 20px; margin: 2px 0 0; flex: 0 0 auto; accent-color: #7A2E3A">
+              <span><strong style="font-weight: 600">En el buscador</strong> y en su dirección pública</span>
+            </label>
+            <label style="display: flex; align-items: flex-start; gap: 10px; min-height: 44px; font-size: 15px; line-height: 1.5; cursor: pointer">
+              <input type="radio" name="vis" checked="{{linkOnly}}" onChange="{{pickLink}}" style="width: 20px; height: 20px; margin: 2px 0 0; flex: 0 0 auto; accent-color: #7A2E3A">
+              <span><strong style="font-weight: 600">Solo con enlace</strong>: no aparece en el buscador</span>
+            </label>
+          </fieldset>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="enlace" style="font-size: 14px; font-weight: 600; color: #6B6258">Enlace</label>
+            <div style="display: flex; gap: 8px">
+              <input id="enlace" type="text" readonly value="{{link}}" style="flex: 1; min-width: 0; height: 44px; padding: 0 10px; box-sizing: border-box; border: 1px solid #D6CBB8; border-radius: 6px; background: #FAF7F2; font: inherit; font-size: 13px; color: #2B2622">
+              <button type="button" onClick="{{copy}}" disabled="{{archived}}" style="height: 44px; padding: 0 14px; border: 1px solid #D6CBB8; border-radius: 8px; background: #FFFFFF; color: #2B2622; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Copiar</button>
+            </div>
+            <span aria-live="polite" style="font-size: 13px; color: #24532F; min-height: 18px">{{copyMsg}}</span>
+          </div>
+          <sc-if value="{{showRegen}}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; flex-direction: column; gap: 8px; padding-top: 12px; border-top: 1px solid #EFE8DC">
+              <sc-if value="{{regenAsk}}" hint-placeholder-val="{{ false }}">
+                <div role="alertdialog" aria-labelledby="regen-t" style="display: flex; flex-direction: column; gap: 10px; padding: 12px; background: #FAF7F2; border-radius: 8px">
+                  <span id="regen-t" style="font-size: 14px; line-height: 1.5">Los enlaces que ya compartiste dejarán de funcionar. ¿Generar uno nuevo?</span>
+                  <div style="display: flex; gap: 8px">
+                    <button type="button" onClick="{{regen}}" style="height: 44px; padding: 0 14px; border: 0; border-radius: 8px; background: #2B2622; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Generar nuevo</button>
+                    <button type="button" onClick="{{regenCancel}}" style="height: 44px; padding: 0 12px; border: 0; background: transparent; color: #7A2E3A; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Cancelar</button>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{regenIdle}}" hint-placeholder-val="{{ true }}">
+                <button type="button" onClick="{{regenStart}}" style="align-self: flex-start; min-height: 44px; padding: 0 4px; border: 0; background: transparent; color: #7A2E3A; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Regenerar enlace</button>
+              </sc-if>
+            </div>
+          </sc-if>
+          <span style="font-size: 13px; color: #6B6258; line-height: 1.5">Cambiar dónde se ve no necesita una nueva revisión.</span>
+        </section>
+
+        <section aria-labelledby="archivar" style="display: flex; flex-direction: column; gap: 10px; padding: 18px; background: #FFFFFF; border: 1px solid #E3DACB; border-radius: 12px">
+          <h2 id="archivar" style="margin: 0; font-size: 15px; font-weight: 600">Retirar del público</h2>
+          <sc-if value="{{archiveAsk}}" hint-placeholder-val="{{ false }}">
+            <div role="alertdialog" aria-labelledby="arch-t" style="display: flex; flex-direction: column; gap: 10px">
+              <span id="arch-t" style="font-size: 14px; line-height: 1.5">Dejará de verse en el buscador y en los enlaces. Podrás restaurarla cuando quieras.</span>
+              <div style="display: flex; gap: 8px">
+                <button type="button" onClick="{{archive}}" style="height: 44px; padding: 0 14px; border: 0; border-radius: 8px; background: #B3261E; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Archivar</button>
+                <button type="button" onClick="{{archiveCancel}}" style="height: 44px; padding: 0 12px; border: 0; background: transparent; color: #7A2E3A; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Cancelar</button>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{archiveIdle}}" hint-placeholder-val="{{ true }}">
+            <button type="button" onClick="{{archiveStart}}" style="align-self: flex-start; height: 44px; padding: 0 16px; border: 1px solid #F0B9B5; border-radius: 8px; background: #FFFFFF; color: #B3261E; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Archivar…</button>
+          </sc-if>
+        </section>
+      </aside>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { vis: 'listado', token: 'a8F3kZ1rN0', copied: false, regenAsk: false, regenDone: false, archiveAsk: false, archived: false };
+}
+renderVals() {
+const s = this.state;
+const listed = s.vis === 'listado';
+const st = s.archived ? { label: 'Archivado', bg: '#E6E9EC', fg: '#3E454C', dot: '#59616B' } : { label: 'Publicado · cambios en revisión', bg: '#E3F0E5', fg: '#24532F', dot: '#A8680A' };
+return {
+active: !s.archived, archived: s.archived,
+statusLabel: st.label,
+badge: 'display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 12px; border-radius: 14px; font-size: 13px; font-weight: 600; background: ' + st.bg + '; color: ' + st.fg + ';',
+dot: 'display: block; width: 7px; height: 7px; border-radius: 50%; background: ' + st.dot + ';',
+listed: listed, linkOnly: !listed,
+link: listed ? 'https://[dominio]/oraciones/oracion-a-san-miguel-arcangel' : 'https://[dominio]/c/' + s.token,
+copyMsg: s.regenDone ? 'Nuevo enlace generado. Los anteriores ya no funcionan.' : (s.copied ? 'Enlace copiado.' : ''),
+showRegen: !listed && !s.archived,
+regenAsk: s.regenAsk, regenIdle: !s.regenAsk,
+archiveAsk: s.archiveAsk && !s.archived, archiveIdle: !s.archiveAsk && !s.archived,
+pickListed: () => this.setState({ vis: 'listado', copied: false, regenDone: false }),
+pickLink: () => this.setState({ vis: 'enlace', copied: false, regenDone: false }),
+copy: () => this.setState({ copied: true, regenDone: false }),
+regenStart: () => this.setState({ regenAsk: true }),
+regenCancel: () => this.setState({ regenAsk: false }),
+regen: () => this.setState({ regenAsk: false, regenDone: true, copied: false, token: 'Qm7xT2pLw9' }),
+archiveStart: () => this.setState({ archiveAsk: true }),
+archiveCancel: () => this.setState({ archiveAsk: false }),
+archive: () => this.setState({ archiveAsk: false, archived: true }),
+restore: () => this.setState({ archived: false })
+};
+}
+}
+</script>
+</body>
+</html>

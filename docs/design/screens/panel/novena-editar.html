@@ -1,0 +1,134 @@
+<!doctype html>
+<!--
+  REFERENCIA DE DISEÑO · no es código de producción
+  Pantalla del lienzo: NovenaEditor.dc.html
+  Ruta en la app: /panel/novenas/ID
+  Cómo leer este archivo y cómo implementarlo: docs/design/AGENTS.md
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Panel · Editor de novena</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#7A2E3A}a:hover{color:#63232E}
+button:disabled{opacity:.45;cursor:not-allowed}
+</style>
+</helmet>
+<div style="min-height: 100vh; box-sizing: border-box; background: #FAF7F2; color: #2B2622; font-family: Inter, system-ui, sans-serif; display: flex; flex-wrap: wrap">
+  <div style="flex: 1 1 248px; background: #FFFFFF; border-right: 1px solid #E3DACB">
+    <dc-import name="PanelNav" current="novenas" role="usuario" hint-size="100%,620px"></dc-import>
+  </div>
+
+  <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: clamp(20px, 3vw, 32px) clamp(16px, 3vw, 40px) 40px; display: flex; flex-direction: column; gap: 20px">
+    <nav aria-label="Ruta" style="display: flex; flex-wrap: wrap; gap: 6px; font-size: 14px; color: #6B6258">
+      <a href="/panel/novenas" style="color: #6B6258">Novenas</a><span aria-hidden="true">/</span><span aria-current="page">Editar novena</span>
+    </nav>
+
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
+      <div style="display: flex; flex-direction: column; gap: 6px; flex: 1 1 360px">
+        <label for="titulo" style="font-size: 14px; font-weight: 600; color: #6B6258">Título de la novena</label>
+        <input id="titulo" type="text" value="Novena al Divino Niño Jesús" style="height: 48px; padding: 0 12px; box-sizing: border-box; border: 1px solid #D6CBB8; border-radius: 6px; background: #FFFFFF; font-family: 'Source Serif 4', Georgia, serif; font-size: 22px; font-weight: 600; color: #2B2622">
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 10px">
+        <button type="button" style="height: 44px; padding: 0 18px; border: 1px solid #D6CBB8; border-radius: 10px; background: #FFFFFF; color: #2B2622; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Guardar</button>
+        <button type="button" onClick="{{submit}}" disabled="{{incomplete}}" aria-describedby="requisitos" style="height: 44px; padding: 0 18px; border: 0; border-radius: 10px; background: #7A2E3A; color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Solicitar publicación</button>
+      </div>
+    </div>
+
+    <sc-if value="{{sent}}" hint-placeholder-val="{{ false }}">
+      <div role="status" style="padding: 12px 16px; background: #E3F0E5; border-radius: 10px; color: #24532F; font-size: 15px; font-weight: 600">Solicitud enviada. Te avisaremos por correo cuando un revisor la resuelva.</div>
+    </sc-if>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+      <section aria-labelledby="estructura" style="flex: 999 1 460px; min-width: 0; display: flex; flex-direction: column; gap: 4px; padding: clamp(16px, 2.5vw, 24px); background: #FFFFFF; border: 1px solid #E3DACB; border-radius: 12px">
+        <h2 id="estructura" style="margin: 0 0 8px; font-size: 17px; font-weight: 600">Estructura</h2>
+        <sc-for list="{{slots}}" as="sl" hint-placeholder-count="11">
+          <div style="{{sl.row}}">
+            <label for="{{sl.id}}" style="flex: 1 1 160px; display: flex; flex-direction: column; gap: 2px">
+              <span style="font-size: 15px; font-weight: 600">{{sl.label}}</span>
+              <span style="font-size: 13px; color: {{sl.hintColor}}">{{sl.hint}}</span>
+            </label>
+            <select id="{{sl.id}}" onChange="{{sl.change}}" value="{{sl.value}}" style="{{sl.selectStyle}}">
+              <sc-for list="{{sl.options}}" as="o" hint-placeholder-count="2">
+                <option value="{{o.value}}">{{o.label}}</option>
+              </sc-for>
+            </select>
+          </div>
+        </sc-for>
+        <a href="/panel/secuencias/ID" style="align-self: flex-start; display: flex; align-items: center; min-height: 44px; margin-top: 8px; font-size: 15px; font-weight: 600">Crear una secuencia nueva</a>
+      </section>
+
+      <aside style="flex: 1 1 280px; display: flex; flex-direction: column; gap: 12px; padding: 18px; background: #FFFFFF; border: 1px solid #E3DACB; border-radius: 12px">
+        <h2 id="requisitos" style="margin: 0; font-size: 15px; font-weight: 600">{{checkTitle}}</h2>
+        <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px">
+          <sc-for list="{{checks}}" as="c" hint-placeholder-count="3">
+            <li style="display: flex; align-items: center; gap: 10px; font-size: 15px">
+              <span aria-hidden="true" style="{{c.icon}}">{{c.mark}}</span>
+              <span>{{c.label}} <span style="color: #6B6258">· {{c.state}}</span></span>
+            </li>
+          </sc-for>
+        </ul>
+        <span style="font-size: 13px; color: #6B6258; line-height: 1.5">El botón se activa cuando la novena está completa. Las secuencias que aún no están aprobadas se revisan junto con la novena.</span>
+      </aside>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1120}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { open: 'ap', close: '', days: ['d1', 'd2', 'd3', 'd4', 'd5', 'd6', '', '', ''], sent: false };
+}
+renderVals() {
+const s = this.state;
+const none = { value: '', label: 'Sin asignar' };
+const dayOpts = [none];
+for (let n = 1; n <= 9; n++) dayOpts.push({ value: 'd' + n, label: 'Día ' + n + ' · Divino Niño' });
+const ok = (v) => v !== '';
+const rowBase = 'display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 12px 0; border-bottom: 1px solid #EFE8DC;';
+const sel = (v) => 'flex: 1 1 240px; height: 44px; padding: 0 10px; border-radius: 6px; font: inherit; font-size: 15px; color: #2B2622; background: #FFFFFF; ' + (ok(v) ? 'border: 1px solid #D6CBB8;' : 'border: 1px dashed #A8680A;');
+const slot = (id, label, hint, value, options, change) => ({
+id: id, label: label, value: value, options: options, change: change,
+hint: ok(value) ? hint : 'Falta asignar',
+hintColor: ok(value) ? '#6B6258' : '#7A4A05',
+row: rowBase, selectStyle: sel(value)
+});
+const slots = [slot('apertura', 'Oración de apertura', 'Se reza todos los días', s.open, [none, { value: 'ap', label: 'Apertura · Divino Niño' }], (e) => this.setState({ open: e.target.value, sent: false }))];
+s.days.forEach((v, k) => {
+slots.push(slot('dia-' + (k + 1), 'Día ' + (k + 1), 'Consideración del día', v, dayOpts, (e) => {
+const d = s.days.slice(); d[k] = e.target.value; this.setState({ days: d, sent: false });
+}));
+});
+slots.push(slot('cierre', 'Oración final', 'Se reza todos los días', s.close, [none, { value: 'ci', label: 'Cierre · Divino Niño' }], (e) => this.setState({ close: e.target.value, sent: false })));
+const daysDone = s.days.filter(ok).length;
+const missing = s.days.map((v, k) => ok(v) ? null : k + 1).filter((x) => x !== null);
+const checks = [
+{ label: 'Apertura', done: ok(s.open), state: ok(s.open) ? 'lista' : 'falta' },
+{ label: 'Días', done: daysDone === 9, state: daysDone + ' de 9' + (missing.length ? ' (faltan ' + missing.join(', ') + ')' : '') },
+{ label: 'Cierre', done: ok(s.close), state: ok(s.close) ? 'lista' : 'falta' }
+];
+const complete = checks.every((c) => c.done);
+return {
+slots: slots,
+checks: checks.map((c) => ({
+label: c.label, state: c.state, mark: c.done ? '✓' : '!',
+icon: 'flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; ' + (c.done ? 'background: #E3F0E5; color: #24532F;' : 'background: #FBEFD9; color: #6B4104;')
+})),
+checkTitle: complete ? 'Lista para solicitar su publicación' : 'Para solicitar la publicación falta',
+incomplete: !complete || s.sent,
+sent: s.sent,
+submit: () => this.setState({ sent: true })
+};
+}
+}
+</script>
+</body>
+</html>

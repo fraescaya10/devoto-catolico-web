@@ -1,0 +1,111 @@
+<!doctype html>
+<!--
+  REFERENCIA DE DISEÑO · no es código de producción
+  Pantalla del lienzo: Oraciones.dc.html
+  Ruta en la app: /oraciones
+  Cómo leer este archivo y cómo implementarlo: docs/design/AGENTS.md
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Oraciones</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#7A2E3A}a:hover{color:#63232E}
+input::placeholder{color:#857B70}
+</style>
+</helmet>
+<div style="min-height: 100vh; box-sizing: border-box; background: #FAF7F2; color: #2B2622; font-family: Inter, system-ui, sans-serif">
+  <dc-import name="PublicHeader" current="oraciones" hint-size="100%,69px"></dc-import>
+  <main style="max-width: 1120px; margin: 0 auto; box-sizing: border-box; padding: clamp(24px, 4vw, 48px) clamp(16px, 4vw, 40px) 64px; display: flex; flex-direction: column; gap: 24px">
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <h1 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: clamp(30px, 4vw, 40px)">Oraciones</h1>
+      <p style="margin: 0; font-size: 17px; color: #6B6258">Oraciones, jaculatorias, cánticos y relatos revisados.</p>
+    </div>
+
+    <form role="search" style="display: flex; flex-direction: column; gap: 8px; max-width: 640px">
+      <label for="q" style="font-size: 14px; color: #6B6258">Buscar por título o texto</label>
+      <div style="display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 16px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D6CBB8; border-radius: 10px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B6258" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <input id="q" type="search" placeholder="Ej.: ángel, María, perdón" style="flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font: inherit; font-size: 17px; color: #2B2622">
+      </div>
+    </form>
+
+    <div role="group" aria-label="Filtrar por tipo" style="display: flex; flex-wrap: wrap; gap: 8px">
+      <sc-for list="{{chips}}" as="ch" hint-placeholder-count="6">
+        <button type="button" aria-pressed="{{ch.on}}" onClick="{{ch.pick}}" style="{{ch.style}}">{{ch.label}}</button>
+      </sc-for>
+    </div>
+
+    <span aria-live="polite" style="font-size: 15px; color: #6B6258">{{countLabel}}</span>
+
+    <sc-if value="{{hasResults}}" hint-placeholder-val="{{ true }}">
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 16px">
+        <sc-for list="{{results}}" as="r" hint-placeholder-count="6">
+          <a href="/oraciones/oracion-a-san-miguel-arcangel" style="display: flex; flex-direction: column; gap: 8px; padding: 20px; background: #FFFFFF; border: 1px solid #E3DACB; border-radius: 12px; text-decoration: none; color: #2B2622">
+            <span style="font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #7A2E3A">{{r.type}}</span>
+            <span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 21px; font-weight: 600; line-height: 1.25">{{r.title}}</span>
+            <span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 16px; line-height: 1.6; color: #6B6258">{{r.excerpt}}</span>
+          </a>
+        </sc-for>
+      </div>
+    </sc-if>
+    <sc-if value="{{empty}}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 28px; background: #FFFFFF; border: 1px dashed #D6CBB8; border-radius: 12px">
+        <span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 21px; font-weight: 600">Aún no hay contenidos de este tipo</span>
+        <span style="font-size: 15px; color: #6B6258">Los editores los irán agregando. Mientras tanto, puedes ver todas las oraciones.</span>
+        <button type="button" onClick="{{showAll}}" style="height: 44px; padding: 0 18px; border: 1px solid #D6CBB8; border-radius: 10px; background: #FFFFFF; color: #2B2622; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Ver todas</button>
+      </div>
+    </sc-if>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1040}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { tipo: 'todas' };
+}
+renderVals() {
+const all = [
+{ title: 'Padre Nuestro', type: 'Oración', excerpt: 'Padre nuestro, que estás en el cielo, santificado sea tu Nombre…' },
+{ title: 'Ave María', type: 'Oración', excerpt: 'Dios te salve, María, llena eres de gracia, el Señor es contigo…' },
+{ title: 'Gloria', type: 'Oración', excerpt: 'Gloria al Padre, y al Hijo, y al Espíritu Santo…' },
+{ title: 'Oración a San Miguel Arcángel', type: 'Oración', excerpt: 'San Miguel Arcángel, defiéndenos en la lucha…' },
+{ title: 'Salve', type: 'Oración', excerpt: 'Dios te salve, Reina y Madre de misericordia, vida, dulzura y esperanza nuestra…' },
+{ title: 'Ángel de la Guarda', type: 'Oración', excerpt: 'Ángel de mi guarda, dulce compañía, no me desampares ni de noche ni de día…' },
+{ title: 'Sagrado Corazón de Jesús, en vos confío', type: 'Jaculatoria', excerpt: 'Sagrado Corazón de Jesús, en vos confío.' },
+{ title: 'Jesús, José y María', type: 'Jaculatoria', excerpt: 'Jesús, José y María, os doy el corazón y el alma mía.' }
+];
+const tipos = ['Todas', 'Oración', 'Jaculatoria', 'Cántico', 'Relato', 'Parábola'];
+const t = this.state.tipo;
+const results = t === 'todas' ? all : all.filter((r) => r.type.toLowerCase() === t);
+const count = (k) => k === 'Todas' ? all.length : all.filter((r) => r.type === k).length;
+return {
+chips: tipos.map((k) => {
+const key = k === 'Todas' ? 'todas' : k.toLowerCase();
+const on = key === t;
+return {
+label: k + ' · ' + count(k),
+on: on,
+pick: () => this.setState({ tipo: key }),
+style: 'height: 44px; padding: 0 16px; border-radius: 22px; font: inherit; font-size: 15px; cursor: pointer; ' + (on ? 'background: #2B2622; color: #FFFFFF; border: 1px solid #2B2622; font-weight: 600;' : 'background: #FFFFFF; color: #2B2622; border: 1px solid #D6CBB8;')
+};
+}),
+results: results,
+hasResults: results.length > 0,
+empty: results.length === 0,
+countLabel: results.length === 1 ? '1 resultado' : results.length + ' resultados',
+showAll: () => this.setState({ tipo: 'todas' })
+};
+}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!doctype html>
+<!--
+  REFERENCIA DE DISEÑO · no es código de producción
+  Pantalla del lienzo: PublicHeader.dc.html
+  Ruta en la app: (componente o referencia, sin ruta propia)
+  Cómo leer este archivo y cómo implementarlo: docs/design/AGENTS.md
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Cabecera pública</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<header style="box-sizing: border-box; width: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; padding: 12px clamp(16px, 4vw, 40px); background: {{c.bg}}; border-bottom: 1px solid {{c.border}}; font-family: Inter, system-ui, sans-serif; color: {{c.text}}">
+  <a href="/" style="display: flex; align-items: center; min-height: 44px; font-family: 'Source Serif 4', Georgia, serif; font-size: 22px; font-weight: 600; color: {{c.primary}}; text-decoration: none">[Nombre]</a>
+  <nav aria-label="Principal" style="display: flex; flex-wrap: wrap; gap: 4px; flex: 1 1 auto">
+    <sc-for list="{{links}}" as="l" hint-placeholder-count="4">
+      <a href="{{l.href}}" aria-current="{{l.current}}" style="{{l.style}}">{{l.label}}</a>
+    </sc-for>
+  </nav>
+  <a href="/oraciones" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border: 1px solid {{c.border}}; border-radius: 10px; background: {{c.surface}}; color: {{c.text}}; text-decoration: none; font-size: 15px">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="{{c.muted}}" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+    Buscar
+  </a>
+  <a href="/ingresar" style="display: flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 10px; background: {{c.primary}}; color: {{c.onPrimary}}; text-decoration: none; font-size: 15px; font-weight: 600">Ingresar</a>
+</header>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"current":{"editor":"enum","options":["inicio","oraciones","novenas","rosarios","ninguno"],"default":"inicio"},"dark":{"editor":"boolean","default":false},"$preview":{"width":1280,"height":69}}'>
+class Component extends DCLogic {
+renderVals() {
+const dark = !!this.props.dark;
+const cur = this.props.current ?? 'inicio';
+const light = { bg: '#FAF7F2', surface: '#FFFFFF', text: '#2B2622', muted: '#6B6258', border: '#E3DACB', primary: '#7A2E3A', onPrimary: '#FFFFFF', active: '#F2EDE4' };
+const night = { bg: '#171412', surface: '#211C19', text: '#EDE6DB', muted: '#A89E91', border: '#3A322C', primary: '#D9919B', onPrimary: '#2B1216', active: '#2A2420' };
+const c = dark ? night : light;
+const items = [['inicio', 'Inicio', '/'], ['oraciones', 'Oraciones', '/oraciones'], ['novenas', 'Novenas', '/novenas'], ['rosarios', 'Rosarios', '/rosarios']];
+const base = 'display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; font-size: 15px; color: ' + c.text + ';';
+return {
+c: c,
+links: items.map((x) => {
+const on = x[0] === cur;
+return { label: x[1], href: x[2], current: on ? 'page' : null, style: base + (on ? ' background: ' + c.active + '; font-weight: 600;' : '') };
+})
+};
+}
+}
+</script>
+</body>
+</html>

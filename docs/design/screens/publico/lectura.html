@@ -1,0 +1,84 @@
+<!doctype html>
+<!--
+  REFERENCIA DE DISEÑO · no es código de producción
+  Pantalla del lienzo: Lectura.dc.html
+  Ruta en la app: /oraciones/oracion-a-san-miguel-arcangel
+  Cómo leer este archivo y cómo implementarlo: docs/design/AGENTS.md
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Lectura de oración</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap">
+<style>
+body{margin:0}
+button:disabled{opacity:.45;cursor:default}
+</style>
+</helmet>
+<div style="min-height: 100vh; box-sizing: border-box; background: {{c.bg}}; color: {{c.text}}; font-family: Inter, system-ui, sans-serif">
+  <dc-import name="PublicHeader" current="oraciones" dark="{{dark}}" hint-size="100%,69px"></dc-import>
+  <main style="max-width: 720px; margin: 0 auto; box-sizing: border-box; padding: clamp(20px, 4vw, 48px) clamp(16px, 4vw, 24px) 64px; display: flex; flex-direction: column; gap: 24px">
+    <nav aria-label="Ruta" style="display: flex; flex-wrap: wrap; gap: 6px; font-size: 14px; color: {{c.muted}}">
+      <a href="/" style="color: {{c.muted}}">Inicio</a><span aria-hidden="true">/</span>
+      <a href="/oraciones" style="color: {{c.muted}}">Oraciones</a><span aria-hidden="true">/</span>
+      <span aria-current="page">San Miguel Arcángel</span>
+    </nav>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <span style="font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: {{c.primary}}">Oración</span>
+      <h1 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: clamp(30px, 4vw, 40px); line-height: 1.2">Oración a San Miguel Arcángel</h1>
+      <span style="font-size: 14px; color: {{c.muted}}">Fuente: tradicional (atribuida a León XIII) · Publicado por [Autor] · Revisado</span>
+    </div>
+
+    <div role="group" aria-label="Controles de lectura" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 0; border-top: 1px solid {{c.border}}; border-bottom: 1px solid {{c.border}}">
+      <button type="button" onClick="{{smaller}}" disabled="{{atMin}}" style="height: 44px; padding: 0 14px; border: 1px solid {{c.border}}; border-radius: 10px; background: {{c.surface}}; color: {{c.text}}; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">A− <span style="font-weight: 400">Reducir</span></button>
+      <button type="button" onClick="{{bigger}}" disabled="{{atMax}}" style="height: 44px; padding: 0 14px; border: 1px solid {{c.border}}; border-radius: 10px; background: {{c.surface}}; color: {{c.text}}; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">A+ <span style="font-weight: 400">Aumentar</span></button>
+      <button type="button" aria-pressed="{{dark}}" onClick="{{toggleTheme}}" style="display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border: 1px solid {{c.border}}; border-radius: 10px; background: {{c.surface}}; color: {{c.text}}; font: inherit; font-size: 15px; cursor: pointer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="{{c.text}}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+        Modo oscuro
+      </button>
+    </div>
+
+    <p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: {{fontSize}}; line-height: 1.8">San Miguel Arcángel, defiéndenos en la lucha. Sé nuestro amparo contra la perversidad y asechanzas del demonio. Que Dios manifieste sobre él su poder, es nuestra humilde súplica. Y tú, Príncipe de la Milicia Celestial, con el poder que Dios te ha conferido, arroja al infierno a Satanás y a los demás espíritus malignos que vagan por el mundo para la perdición de las almas. Amén.</p>
+
+    <section style="display: flex; flex-direction: column; gap: 4px; padding-top: 16px; border-top: 1px solid {{c.border}}">
+      <h2 style="margin: 0 0 6px; font-size: 14px; font-weight: 600; color: {{c.muted}}">Ver también</h2>
+      <a href="/rosarios" style="display: flex; align-items: center; min-height: 48px; color: {{c.primary}}; font-size: 16px">Santo Rosario</a>
+      <a href="/novenas/novena-a-san-judas-tadeo" style="display: flex; align-items: center; min-height: 48px; color: {{c.primary}}; font-size: 16px">Novena a San Judas Tadeo</a>
+    </section>
+    <a href="#reportar" style="align-self: flex-start; display: flex; align-items: center; min-height: 44px; font-size: 14px; color: {{c.muted}}">Reportar un problema con este contenido</a>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":1280,"height":920}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { scale: 1, dark: null };
+}
+renderVals() {
+const sizes = ['18px', '21px', '24px', '28px'];
+const dark = this.state.dark === null ? (this.props.dark ?? false) : this.state.dark;
+const light = { bg: '#FAF7F2', surface: '#FFFFFF', text: '#2B2622', muted: '#6B6258', border: '#E3DACB', primary: '#7A2E3A' };
+const night = { bg: '#171412', surface: '#211C19', text: '#EDE6DB', muted: '#A89E91', border: '#3A322C', primary: '#D9919B' };
+const s = this.state.scale;
+return {
+c: dark ? night : light,
+dark: dark,
+fontSize: sizes[s],
+atMin: s === 0,
+atMax: s === sizes.length - 1,
+smaller: () => this.setState({ scale: Math.max(0, s - 1) }),
+bigger: () => this.setState({ scale: Math.min(sizes.length - 1, s + 1) }),
+toggleTheme: () => this.setState({ dark: !dark })
+};
+}
+}
+</script>
+</body>
+</html>

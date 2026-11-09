@@ -1,0 +1,15 @@
+.DS_Store
+.env
+node_modules/
+.venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+local.db
+.next/
+coverage/
+*.tsbuildinfo
+.tasks
+.learn
+.claude/settings.local.json

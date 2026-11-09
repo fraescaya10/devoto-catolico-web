@@ -1,0 +1,100 @@
+<!doctype html>
+<!--
+  REFERENCIA DE DISEÑO · no es código de producción
+  Pantalla del lienzo: Novena.dc.html
+  Ruta en la app: /novenas/novena-a-san-judas-tadeo
+  Cómo leer este archivo y cómo implementarlo: docs/design/AGENTS.md
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Novena por día</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#7A2E3A}a:hover{color:#63232E}
+</style>
+</helmet>
+<div style="min-height: 100vh; box-sizing: border-box; background: #FAF7F2; color: #2B2622; font-family: Inter, system-ui, sans-serif">
+  <dc-import name="PublicHeader" current="novenas" hint-size="100%,69px"></dc-import>
+  <main style="max-width: 1120px; margin: 0 auto; box-sizing: border-box; padding: clamp(20px, 4vw, 48px) clamp(16px, 4vw, 40px) 64px; display: flex; flex-direction: column; gap: 24px">
+    <nav aria-label="Ruta" style="display: flex; flex-wrap: wrap; gap: 6px; font-size: 14px; color: #6B6258">
+      <a href="/" style="color: #6B6258">Inicio</a><span aria-hidden="true">/</span>
+      <a href="/novenas" style="color: #6B6258">Novenas</a><span aria-hidden="true">/</span>
+      <span aria-current="page">San Judas Tadeo</span>
+    </nav>
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <h1 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: clamp(30px, 4vw, 40px); line-height: 1.2">Novena a San Judas Tadeo</h1>
+      <span style="font-size: 15px; color: #6B6258">{{doneLabel}} · tu avance se guarda en este dispositivo</span>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+      <aside style="flex: 1 1 280px; display: flex; flex-direction: column; gap: 16px">
+        <fieldset style="margin: 0; padding: 0; border: 0">
+          <legend style="font-size: 15px; font-weight: 600; margin-bottom: 10px">Elige el día</legend>
+          <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px">
+            <sc-for list="{{days}}" as="d" hint-placeholder-count="9">
+              <button type="button" aria-pressed="{{d.selected}}" aria-label="{{d.label}}" onClick="{{d.pick}}" style="{{d.style}}">{{d.n}}</button>
+            </sc-for>
+          </div>
+        </fieldset>
+        <div style="display: flex; align-items: center; justify-content: space-between; min-height: 56px; padding: 8px 14px; background: #F2EDE4; border-radius: 10px">
+          <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">Oración de apertura</span><span style="font-size: 13px; color: #6B6258">Se reza todos los días</span></span>
+          <a href="/oraciones/oracion-a-san-miguel-arcangel" style="min-height: 44px; display: flex; align-items: center; padding: 0 4px; font-size: 14px; font-weight: 600">Ver</a>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; min-height: 56px; padding: 8px 14px; background: #F2EDE4; border-radius: 10px">
+          <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">Oración final</span><span style="font-size: 13px; color: #6B6258">Se reza todos los días</span></span>
+          <a href="/oraciones/oracion-a-san-miguel-arcangel" style="min-height: 44px; display: flex; align-items: center; padding: 0 4px; font-size: 14px; font-weight: 600">Ver</a>
+        </div>
+      </aside>
+
+      <article style="flex: 999 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 14px; padding: clamp(20px, 3vw, 32px); background: #FFFFFF; border: 1px solid #E3DACB; border-radius: 12px">
+        <span style="font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #7A2E3A">Día {{selected}} de 9</span>
+        <h2 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 26px">Consideración del día</h2>
+        <p style="margin: 0; max-width: 65ch; font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; line-height: 1.8; color: #6B6258">[Texto del día {{selected}}: lo redacta el editor y lo aprueba el revisor]</p>
+        <button type="button" onClick="{{markDone}}" style="align-self: flex-start; height: 52px; padding: 0 22px; border: {{btnBorder}}; border-radius: 10px; background: {{btnBg}}; color: {{btnText}}; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer">{{btnLabel}}</button>
+      </article>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { selected: 3, done: [1, 2] };
+}
+renderVals() {
+const sel = this.state.selected;
+const done = this.state.done;
+const isDone = done.indexOf(sel) !== -1;
+const days = [];
+for (let n = 1; n <= 9; n++) {
+const s = n === sel;
+const d = done.indexOf(n) !== -1;
+let style = 'height: 48px; border-radius: 10px; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; padding: 0; ';
+if (s) style += 'background: #7A2E3A; color: #FFFFFF; border: 1px solid #7A2E3A;';
+else if (d) style += 'background: #F2EDE4; color: #2B2622; border: 1px solid #D6CBB8; text-decoration: line-through; text-decoration-color: #7A2E3A;';
+else style += 'background: #FFFFFF; color: #2B2622; border: 1px solid #D6CBB8;';
+days.push({ n: n, selected: s, style: style, label: 'Día ' + n + (d ? ', rezado' : ''), pick: () => this.setState({ selected: n }) });
+}
+return {
+days: days,
+selected: sel,
+doneLabel: done.length + ' de 9 días rezados',
+btnLabel: isDone ? 'Día ' + sel + ' rezado · desmarcar' : 'Marcar día ' + sel + ' como rezado',
+btnBg: isDone ? '#FFFFFF' : '#7A2E3A',
+btnText: isDone ? '#2B2622' : '#FFFFFF',
+btnBorder: isDone ? '1px solid #D6CBB8' : '0',
+markDone: () => this.setState({ done: isDone ? done.filter((x) => x !== sel) : done.concat([sel]) })
+};
+}
+}
+</script>
+</body>
+</html>

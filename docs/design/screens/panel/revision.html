@@ -1,0 +1,221 @@
+<!doctype html>
+<!--
+  REFERENCIA DE DISEÑO · no es código de producción
+  Pantalla del lienzo: Revision.dc.html
+  Ruta en la app: /panel/revision
+  Cómo leer este archivo y cómo implementarlo: docs/design/AGENTS.md
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Panel · Cola de revisión</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#7A2E3A}a:hover{color:#63232E}
+ins{background:#DDEFE1;color:#1E4A28;text-decoration:underline;text-decoration-thickness:2px}
+del{background:#F9DEDC;color:#7A1A14}
+</style>
+</helmet>
+<div style="min-height: 100vh; box-sizing: border-box; background: #FAF7F2; color: #2B2622; font-family: Inter, system-ui, sans-serif; display: flex; flex-wrap: wrap">
+  <div style="flex: 1 1 248px; background: #FFFFFF; border-right: 1px solid #E3DACB">
+    <dc-import name="PanelNav" current="revision" role="revisor" hint-size="100%,620px"></dc-import>
+  </div>
+
+  <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: clamp(20px, 3vw, 32px) clamp(16px, 3vw, 40px) 40px; display: flex; flex-direction: column; gap: 20px">
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <h1 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 30px">Cola de revisión</h1>
+      <span style="font-size: 15px; color: #6B6258">{{pendingLabel}} · ordenadas por prioridad · no aparecen tus propias solicitudes</span>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start">
+      <div style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 16px">
+        <ul aria-label="Solicitudes" style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+          <sc-for list="{{items}}" as="it" hint-placeholder-count="3">
+            <li>
+              <button type="button" aria-pressed="{{it.selected}}" onClick="{{it.pick}}" style="{{it.style}}">
+                <span style="font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: {{it.kindColor}}">{{it.kind}}</span>
+                <span style="font-size: 16px; font-weight: 600">{{it.title}}</span>
+                <span style="font-size: 14px; color: #6B6258">{{it.meta}}</span>
+                <sc-if value="{{it.isResolved}}" hint-placeholder-val="{{ false }}">
+                  <span style="font-size: 13px; font-weight: 600; color: {{it.resolvedColor}}">{{it.resolvedLabel}}</span>
+                </sc-if>
+              </button>
+            </li>
+          </sc-for>
+        </ul>
+        <section aria-labelledby="reportes" style="display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; background: #FFFFFF; border: 1px solid #E3DACB; border-radius: 10px">
+          <h2 id="reportes" style="margin: 0; font-size: 14px; font-weight: 600">Reportes abiertos · 1</h2>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; font-size: 14px">
+            <span><strong style="font-weight: 600">Salve</strong> · error doctrinal · 1 reporte</span>
+            <a href="#reporte" style="min-height: 44px; display: flex; align-items: center; font-weight: 600">Revisar</a>
+          </div>
+        </section>
+      </div>
+
+      <section aria-label="Detalle" style="flex: 999 1 460px; min-width: 0; display: flex; flex-direction: column; gap: 18px; padding: clamp(20px, 3vw, 28px); background: #FFFFFF; border: 1px solid #E3DACB; border-radius: 12px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #7A2E3A">{{d.kind}} · {{d.version}}</span>
+          <h2 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 26px">{{d.title}}</h2>
+          <span style="font-size: 14px; color: #6B6258">Enviada por {{d.author}} · {{d.sent}} · Fuente: {{d.source}}</span>
+        </div>
+
+        <sc-if value="{{d.isDiff}}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px">
+              <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: #6B6258">Cambios respecto a la versión publicada</h3>
+              <span style="display: flex; gap: 12px; font-size: 13px"><ins>Agregado</ins><del>Eliminado</del></span>
+            </div>
+            <p style="margin: 0; padding: 16px 18px; background: #FAF7F2; border-radius: 10px; font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; line-height: 1.9">
+              <sc-for list="{{d.diff}}" as="sg" hint-placeholder-count="5"><sc-if value="{{sg.same}}" hint-placeholder-val="{{ true }}"><span>{{sg.t}}</span></sc-if><sc-if value="{{sg.ins}}" hint-placeholder-val="{{ false }}"><ins>{{sg.t}}</ins></sc-if><sc-if value="{{sg.del}}" hint-placeholder-val="{{ false }}"><del>{{sg.t}}</del></sc-if></sc-for>
+            </p>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{d.isItems}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: #6B6258">Contenido de la secuencia · todo ya está aprobado</h3>
+            <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px">
+              <sc-for list="{{d.items}}" as="x" hint-placeholder-count="5">
+                <li style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; background: #FAF7F2; border-radius: 8px; font-size: 15px">
+                  <span>{{x.t}}</span>
+                  <span style="font-size: 13px; font-weight: 600; color: #24532F">Aprobado</span>
+                </li>
+              </sc-for>
+            </ol>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{d.isDup}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 12px">
+            <div style="padding: 14px 16px; background: #FBEFD9; border: 1px solid #EBCF9A; border-radius: 10px; font-size: 15px; color: #5E3904; line-height: 1.5">
+              <strong style="font-weight: 600">Posible duplicado:</strong> 91 % parecida a "Ángel de la Guarda" (publicada). <a href="/oraciones/oracion-a-san-miguel-arcangel" style="color: #5E3904; font-weight: 600">Compararla</a>
+              <br>Justificación del autor: "{{d.justification}}"
+            </div>
+            <p style="margin: 0; padding: 16px 18px; background: #FAF7F2; border-radius: 10px; font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; line-height: 1.8">{{d.text}}</p>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{resolved}}" hint-placeholder-val="{{ false }}">
+          <div role="status" style="padding: 12px 16px; border-radius: 10px; font-size: 15px; font-weight: 600; background: {{resolvedBg}}; color: {{resolvedFg}}">{{resolvedMsg}}</div>
+        </sc-if>
+
+        <sc-if value="{{showActions}}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 16px; border-top: 1px solid #E3DACB">
+            <button type="button" onClick="{{approve}}" style="height: 48px; padding: 0 22px; border: 0; border-radius: 10px; background: #2F6B3F; color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Aprobar y publicar</button>
+            <button type="button" onClick="{{startReject}}" style="height: 48px; padding: 0 22px; border: 1px solid #D6CBB8; border-radius: 10px; background: #FFFFFF; color: #2B2622; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Rechazar…</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{rejecting}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 12px; padding-top: 16px; border-top: 1px solid #E3DACB">
+            <div style="display: flex; flex-direction: column; gap: 6px; max-width: 420px">
+              <label for="motivo" style="font-size: 15px; font-weight: 600">Motivo del rechazo</label>
+              <select id="motivo" value="{{reason}}" onChange="{{onReason}}" aria-invalid="{{reasonError}}" aria-describedby="motivo-error" style="{{reasonStyle}}">
+                <option value="">Elige un motivo</option>
+                <option value="duplicado">Duplicado de contenido publicado</option>
+                <option value="falta_fuente">Falta la fuente o no es verificable</option>
+                <option value="error_doctrinal">Error doctrinal</option>
+                <option value="no_catolico">No es contenido católico</option>
+                <option value="derechos">Posible infracción de derechos de autor</option>
+                <option value="calidad">Errores de ortografía o formato</option>
+                <option value="otro">Otro</option>
+              </select>
+              <sc-if value="{{reasonError}}" hint-placeholder-val="{{ false }}">
+                <span id="motivo-error" style="font-size: 13px; color: #B3261E">Elige un motivo; el autor lo verá.</span>
+              </sc-if>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="comentario" style="font-size: 15px; font-weight: 600">Comentario para el autor <span style="font-weight: 400; color: #6B6258">(opcional)</span></label>
+              <textarea id="comentario" rows="2" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid #D6CBB8; border-radius: 6px; background: #FFFFFF; font: inherit; font-size: 15px; color: #2B2622; resize: vertical"></textarea>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px">
+              <button type="button" onClick="{{confirmReject}}" style="height: 48px; padding: 0 22px; border: 0; border-radius: 10px; background: #2B2622; color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Confirmar rechazo</button>
+              <button type="button" onClick="{{cancelReject}}" style="height: 48px; padding: 0 18px; border: 0; background: transparent; color: #7A2E3A; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Cancelar</button>
+            </div>
+          </div>
+        </sc-if>
+      </section>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { sel: 0, rejecting: false, reason: '', error: false, resolved: {} };
+}
+renderVals() {
+const s = this.state;
+const data = [
+{
+kind: 'Cambios a contenido publicado', kindColor: '#24532F', title: 'Oración a San Miguel Arcángel', version: 'versión 2', author: '[Usuario 4]', sent: 'ayer', source: 'tradicional (atribuida a León XIII)', mode: 'diff',
+diff: [
+{ t: 'San Miguel Arcángel, defiéndenos en la lucha. Sé nuestro amparo ', k: 's' },
+{ t: 'y protección ', k: 'i' },
+{ t: 'contra la perversidad y ', k: 's' },
+{ t: 'las ', k: 'i' },
+{ t: 'asechanzas del demonio. Que Dios manifieste sobre él su poder, es nuestra humilde súplica. ', k: 's' },
+{ t: 'Te lo pedimos humildemente. ', k: 'd' },
+{ t: 'Y tú, Príncipe de la Milicia Celestial…', k: 's' }
+]
+},
+{ kind: 'Secuencia con contenido aprobado', kindColor: '#1F5FBF', title: 'Coronilla de la Divina Misericordia', version: 'versión 1', author: '[Usuario 7]', sent: 'hace 2 días', source: 'tradicional', mode: 'items', items: ['Padre Nuestro', 'Ave María', 'Credo', 'Padre Eterno, te ofrezco… × 5', 'Por su dolorosa Pasión… × 50', 'Santo Dios… × 3'] },
+{ kind: 'Nueva · posible duplicado', kindColor: '#7A4A05', title: 'Ángel de mi guarda', version: 'versión 1', author: '[Usuario 12]', sent: 'hace 3 días', source: 'tradicional', mode: 'dup', justification: 'En mi parroquia se reza con otra estrofa al final.', text: 'Ángel de mi guarda, dulce compañía, no me desampares ni de noche ni de día. No me dejes solo, que me perdería. Amén.' }
+];
+const sel = s.sel;
+const res = s.resolved[sel];
+const d = data[sel];
+const pending = data.filter((x, k) => !s.resolved[k]).length;
+const rErr = s.error && s.reason === '';
+return {
+pendingLabel: pending === 1 ? '1 solicitud pendiente' : pending + ' solicitudes pendientes',
+items: data.map((x, k) => {
+const on = k === sel;
+const r = s.resolved[k];
+return {
+kind: x.kind, kindColor: x.kindColor, title: x.title,
+meta: x.author + ' · ' + x.sent,
+selected: on, isResolved: !!r,
+resolvedLabel: r === 'aprobada' ? 'Aprobada' : 'Rechazada',
+resolvedColor: r === 'aprobada' ? '#24532F' : '#8C1D16',
+pick: () => this.setState({ sel: k, rejecting: false, reason: '', error: false }),
+style: 'width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 14px 16px; text-align: left; border-radius: 10px; font: inherit; color: #2B2622; cursor: pointer; ' + (on ? 'background: #F2EDE4; border: 1px solid #7A2E3A;' : 'background: #FFFFFF; border: 1px solid #E3DACB;')
+};
+}),
+d: {
+kind: d.kind, title: d.title, version: d.version, author: d.author, sent: d.sent, source: d.source,
+isDiff: d.mode === 'diff', isItems: d.mode === 'items', isDup: d.mode === 'dup',
+diff: (d.diff || []).map((g) => ({ t: g.t, same: g.k === 's', ins: g.k === 'i', del: g.k === 'd' })),
+items: (d.items || []).map((t) => ({ t: t })),
+justification: d.justification || '', text: d.text || ''
+},
+resolved: !!res,
+resolvedMsg: res === 'aprobada' ? 'Aprobada. Ya es visible y el autor recibió un correo.' : 'Rechazada. El autor verá el motivo en su panel y por correo.',
+resolvedBg: res === 'aprobada' ? '#E3F0E5' : '#FCEBEA',
+resolvedFg: res === 'aprobada' ? '#24532F' : '#8C1D16',
+showActions: !res && !s.rejecting,
+rejecting: !res && s.rejecting,
+reason: s.reason,
+reasonError: rErr,
+reasonStyle: 'height: 44px; padding: 0 10px; border-radius: 6px; background: #FFFFFF; font: inherit; font-size: 15px; color: #2B2622; ' + (rErr ? 'border: 2px solid #B3261E;' : 'border: 1px solid #D6CBB8;'),
+onReason: (e) => this.setState({ reason: e.target.value, error: false }),
+approve: () => this.setState({ resolved: Object.assign({}, s.resolved, { [sel]: 'aprobada' }) }),
+startReject: () => this.setState({ rejecting: true }),
+cancelReject: () => this.setState({ rejecting: false, reason: '', error: false }),
+confirmReject: () => {
+if (s.reason === '') { this.setState({ error: true }); return; }
+this.setState({ rejecting: false, reason: '', error: false, resolved: Object.assign({}, s.resolved, { [sel]: 'rechazada' }) });
+}
+};
+}
+}
+</script>
+</body>
+</html>

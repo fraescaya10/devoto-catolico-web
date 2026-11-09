@@ -1,0 +1,265 @@
+<!doctype html>
+<!--
+  REFERENCIA DE DISEÑO · no es código de producción
+  Pantalla del lienzo: RecursoEditor.dc.html
+  Ruta en la app: /panel/oraciones/ID-PRIVADA
+  Cómo leer este archivo y cómo implementarlo: docs/design/AGENTS.md
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Panel · Editar oración</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#7A2E3A}a:hover{color:#63232E}
+fieldset:disabled{opacity:.5}
+</style>
+</helmet>
+<div style="min-height: 100vh; box-sizing: border-box; background: #FAF7F2; color: #2B2622; font-family: Inter, system-ui, sans-serif; display: flex; flex-wrap: wrap">
+  <div style="flex: 1 1 248px; background: #FFFFFF; border-right: 1px solid #E3DACB">
+    <dc-import name="PanelNav" current="oraciones" role="usuario" hint-size="100%,620px"></dc-import>
+  </div>
+
+  <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: clamp(20px, 3vw, 32px) clamp(16px, 3vw, 40px) 40px; display: flex; flex-direction: column; gap: 20px">
+    <nav aria-label="Ruta" style="display: flex; flex-wrap: wrap; gap: 6px; font-size: 14px; color: #6B6258">
+      <a href="/panel/oraciones" style="color: #6B6258">Mis oraciones</a><span aria-hidden="true">/</span><span aria-current="page">Editar</span>
+    </nav>
+
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+        <h1 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 30px">{{titleShown}}</h1>
+        <span style="{{badge}}"><span aria-hidden="true" style="{{dot}}"></span>{{statusLabel}}</span>
+      </div>
+      <sc-if value="{{showMainActions}}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; flex-wrap: wrap; gap: 10px">
+          <button type="button" onClick="{{save}}" style="height: 44px; padding: 0 18px; border: 1px solid #D6CBB8; border-radius: 10px; background: #FFFFFF; color: #2B2622; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Guardar</button>
+          <button type="button" onClick="{{openRequest}}" style="height: 44px; padding: 0 18px; border: 0; border-radius: 10px; background: #7A2E3A; color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Solicitar publicación</button>
+        </div>
+      </sc-if>
+    </div>
+
+    <sc-if value="{{showErrors}}" hint-placeholder-val="{{ false }}">
+      <div role="alert" style="padding: 12px 16px; background: #FCEBEA; border: 1px solid #F0B9B5; border-radius: 10px; color: #8C1D16; font-size: 15px">Para solicitar la publicación, completa {{errorCount}}.</div>
+    </sc-if>
+    <sc-if value="{{hasNotice}}" hint-placeholder-val="{{ false }}">
+      <div role="status" style="padding: 12px 16px; background: #E3F0E5; border-radius: 10px; color: #24532F; font-size: 15px; font-weight: 600">{{notice}}</div>
+    </sc-if>
+
+    <sc-if value="{{requesting}}" hint-placeholder-val="{{ false }}">
+      <section role="dialog" aria-labelledby="solicitar-titulo" style="display: flex; flex-direction: column; gap: 18px; padding: clamp(20px, 3vw, 28px); background: #FFFFFF; border: 2px solid #7A2E3A; border-radius: 12px">
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <h2 id="solicitar-titulo" style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 24px">Solicitar publicación</h2>
+          <span style="font-size: 14px; color: #6B6258">Tienes 2 de 3 solicitudes en revisión. Después de esta tendrás que esperar a que se resuelva alguna.</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 12px; padding: 16px; background: #FBEFD9; border: 1px solid #EBCF9A; border-radius: 10px">
+          <span style="font-size: 15px; font-weight: 600; color: #5E3904">Ya existe una oración publicada muy parecida</span>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; background: #FFFFFF; border-radius: 8px">
+            <span style="display: flex; flex-direction: column; gap: 2px">
+              <span style="font-weight: 600">Ángel de la Guarda</span>
+              <span style="font-size: 13px; color: #6B6258">Publicada · 91 % parecida a la tuya</span>
+            </span>
+            <a href="/oraciones/oracion-a-san-miguel-arcangel" style="min-height: 44px; display: flex; align-items: center; font-size: 14px; font-weight: 600">Verla</a>
+          </div>
+          <fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 6px">
+            <legend style="font-size: 15px; font-weight: 600; margin-bottom: 6px; color: #2B2622">¿Qué quieres hacer?</legend>
+            <label style="display: flex; align-items: flex-start; gap: 10px; min-height: 44px; font-size: 15px; line-height: 1.5; cursor: pointer">
+              <input type="radio" name="dup" checked="{{choiceUse}}" onChange="{{pickUse}}" style="width: 20px; height: 20px; margin: 2px 0 0; flex: 0 0 auto; accent-color: #7A2E3A">
+              <span><strong style="font-weight: 600">Usar la publicada</strong> en mis rosarios y novenas, y no enviar la mía (recomendado)</span>
+            </label>
+            <label style="display: flex; align-items: flex-start; gap: 10px; min-height: 44px; font-size: 15px; line-height: 1.5; cursor: pointer">
+              <input type="radio" name="dup" checked="{{choiceOwn}}" onChange="{{pickOwn}}" style="width: 20px; height: 20px; margin: 2px 0 0; flex: 0 0 auto; accent-color: #7A2E3A">
+              <span><strong style="font-weight: 600">Mi versión es distinta:</strong> enviarla y explicar por qué</span>
+            </label>
+          </fieldset>
+          <sc-if value="{{e.choice}}" hint-placeholder-val="{{ false }}">
+            <span style="font-size: 13px; color: #B3261E">Elige una opción.</span>
+          </sc-if>
+          <sc-if value="{{choiceOwn}}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="justificacion" style="font-size: 15px; font-weight: 600; color: #2B2622">¿En qué se diferencia?</label>
+              <textarea id="justificacion" rows="2" value="{{justification}}" onChange="{{onJust}}" aria-invalid="{{e.just}}" style="{{justStyle}}"></textarea>
+              <sc-if value="{{e.just}}" hint-placeholder-val="{{ false }}">
+                <span style="font-size: 13px; color: #B3261E">Explica la diferencia para que el revisor la tenga en cuenta.</span>
+              </sc-if>
+            </div>
+          </sc-if>
+        </div>
+
+        <fieldset disabled="{{choiceUse}}" style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 6px">
+          <legend style="font-size: 15px; font-weight: 600; margin-bottom: 6px">¿Dónde se verá cuando la aprueben?</legend>
+          <label style="display: flex; align-items: flex-start; gap: 10px; min-height: 44px; font-size: 15px; line-height: 1.5; cursor: pointer">
+            <input type="radio" name="vis" checked="{{visListed}}" onChange="{{pickListed}}" style="width: 20px; height: 20px; margin: 2px 0 0; flex: 0 0 auto; accent-color: #7A2E3A">
+            <span><strong style="font-weight: 600">En el buscador</strong>: cualquiera la encuentra</span>
+          </label>
+          <label style="display: flex; align-items: flex-start; gap: 10px; min-height: 44px; font-size: 15px; line-height: 1.5; cursor: pointer">
+            <input type="radio" name="vis" checked="{{visLink}}" onChange="{{pickLink}}" style="width: 20px; height: 20px; margin: 2px 0 0; flex: 0 0 auto; accent-color: #7A2E3A">
+            <span><strong style="font-weight: 600">Solo con enlace</strong>: la ve quien tenga el enlace</span>
+          </label>
+        </fieldset>
+
+        <sc-if value="{{choiceOwn}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 15px; line-height: 1.5; cursor: pointer">
+              <input type="checkbox" checked="{{rights}}" onChange="{{onRights}}" aria-invalid="{{e.rights}}" style="width: 20px; height: 20px; margin: 2px 0 0; flex: 0 0 auto; accent-color: #7A2E3A">
+              <span>Confirmo que tengo derecho a publicar este texto.</span>
+            </label>
+            <sc-if value="{{e.rights}}" hint-placeholder-val="{{ false }}">
+              <span style="font-size: 13px; color: #B3261E">Necesitamos esta confirmación para publicar.</span>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 4px">
+          <button type="button" onClick="{{confirm}}" style="height: 48px; padding: 0 22px; border: 0; border-radius: 10px; background: #7A2E3A; color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">{{confirmLabel}}</button>
+          <button type="button" onClick="{{cancel}}" style="height: 48px; padding: 0 18px; border: 0; border-radius: 10px; background: transparent; color: #7A2E3A; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Cancelar</button>
+        </div>
+      </section>
+    </sc-if>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+      <form style="flex: 999 1 460px; min-width: 0; display: flex; flex-direction: column; gap: 20px; padding: clamp(20px, 3vw, 28px); background: #FFFFFF; border: 1px solid #E3DACB; border-radius: 12px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="titulo" style="font-size: 15px; font-weight: 600">Título</label>
+          <input id="titulo" type="text" value="{{title}}" onChange="{{onTitle}}" readonly="{{locked}}" aria-invalid="{{e.title}}" aria-describedby="titulo-ayuda" style="{{titleStyle}}">
+          <span id="titulo-ayuda" style="font-size: 13px; color: {{titleHelpColor}}">{{titleHelp}}</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px; max-width: 320px">
+          <label for="tipo" style="font-size: 15px; font-weight: 600">Tipo</label>
+          <select id="tipo" disabled="{{locked}}" style="height: 44px; padding: 0 10px; border: 1px solid #D6CBB8; border-radius: 6px; background: #FFFFFF; font: inherit; font-size: 16px; color: #2B2622">
+            <option selected>Oración</option>
+            <option>Jaculatoria</option>
+            <option>Cántico</option>
+            <option>Relato</option>
+            <option>Parábola</option>
+          </select>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="texto" style="font-size: 15px; font-weight: 600">Texto</label>
+          <textarea id="texto" rows="5" value="{{text}}" onChange="{{onText}}" readonly="{{locked}}" aria-describedby="texto-ayuda" style="width: 100%; box-sizing: border-box; padding: 12px 14px; border: 1px solid #D6CBB8; border-radius: 6px; background: #FFFFFF; font-family: 'Source Serif 4', Georgia, serif; font-size: 19px; line-height: 1.7; color: #2B2622; resize: vertical"></textarea>
+          <span id="texto-ayuda" style="font-size: 13px; color: #6B6258">Escríbelo tal cual se reza; al publicarlo no se corrige ni se abrevia.</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="fuente" style="font-size: 15px; font-weight: 600">Fuente</label>
+          <input id="fuente" type="text" value="{{source}}" onChange="{{onSource}}" readonly="{{locked}}" placeholder="Ej.: tradicional, o libro y edición" aria-invalid="{{e.source}}" aria-describedby="fuente-ayuda" style="{{sourceStyle}}">
+          <span id="fuente-ayuda" style="font-size: 13px; color: {{sourceHelpColor}}">{{sourceHelp}}</span>
+        </div>
+      </form>
+
+      <aside style="flex: 1 1 280px; display: flex; flex-direction: column; gap: 16px">
+        <section style="display: flex; flex-direction: column; gap: 12px; padding: 18px; background: #FFFFFF; border: 1px solid #E3DACB; border-radius: 12px">
+          <h2 style="margin: 0; font-size: 15px; font-weight: 600">Camino a publicarse</h2>
+          <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px">
+            <sc-for list="{{flow}}" as="f" hint-placeholder-count="3">
+              <li style="display: flex; align-items: center; gap: 10px; font-size: 15px">
+                <span aria-hidden="true" style="{{f.dot}}"></span>
+                <span style="{{f.text}}">{{f.label}}</span>
+              </li>
+            </sc-for>
+          </ol>
+          <span style="font-size: 13px; color: #6B6258; line-height: 1.5">Mientras sea privada, solo tú la ves. Un revisor la aprueba o te la devuelve con un motivo.</span>
+        </section>
+        <section style="display: flex; flex-direction: column; gap: 10px; padding: 18px; background: #FFFFFF; border: 1px solid #E3DACB; border-radius: 12px">
+          <h2 style="margin: 0; font-size: 15px; font-weight: 600">Historial</h2>
+          <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 14px">
+            <sc-for list="{{history}}" as="h" hint-placeholder-count="1">
+              <li>{{h.what}} · <span style="color: #6B6258">{{h.when}}</span></li>
+            </sc-for>
+          </ol>
+        </section>
+      </aside>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1200}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = {
+title: 'Ángel de mi guarda',
+text: 'Ángel de mi guarda, dulce compañía, no me desampares ni de noche ni de día. No me dejes solo, que me perdería. Amén.',
+source: '', phase: 'edit', tried: false, notice: '',
+choice: '', justification: '', vis: 'listado', rights: false, triedReq: false
+};
+}
+renderVals() {
+const s = this.state;
+const e = {
+title: s.tried && s.title.trim() === '',
+source: s.tried && s.source.trim() === '',
+choice: s.triedReq && s.choice === '',
+just: s.triedReq && s.choice === 'own' && s.justification.trim() === '',
+rights: s.triedReq && s.choice === 'own' && !s.rights
+};
+const errs = (e.title ? 1 : 0) + (e.source ? 1 : 0);
+const sent = s.phase === 'sent';
+const field = (err) => 'height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 6px; font: inherit; font-size: 16px; color: #2B2622; ' + (err ? 'border: 2px solid #B3261E; background: #FFFFFF;' : 'border: 1px solid #D6CBB8; background: ' + (sent ? '#F2EDE4' : '#FFFFFF') + ';');
+const st = sent ? { label: 'En revisión', bg: '#FBEFD9', fg: '#6B4104', dot: '#A8680A' } : { label: 'Privado', bg: '#EFEAE2', fg: '#4A443E', dot: '#6B6258' };
+const idx = sent ? 1 : 0;
+const steps = ['Privado', 'En revisión', 'Publicado'];
+const history = [{ what: 'Creaste la oración', when: 'Hoy, 10:42' }];
+if (sent) history.unshift({ what: 'Solicitaste su publicación', when: 'Ahora' });
+return {
+titleShown: s.title.trim() === '' ? 'Sin título' : s.title,
+title: s.title, text: s.text, source: s.source,
+locked: sent,
+showMainActions: s.phase === 'edit' || s.phase === 'reused',
+requesting: s.phase === 'request',
+statusLabel: st.label,
+badge: 'display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 12px; border-radius: 14px; font-size: 13px; font-weight: 600; background: ' + st.bg + '; color: ' + st.fg + ';',
+dot: 'display: block; width: 7px; height: 7px; border-radius: 50%; background: ' + st.dot + ';',
+e: e,
+titleStyle: field(e.title),
+titleHelp: e.title ? 'Escribe un título.' : 'Así aparecerá en la búsqueda.',
+titleHelpColor: e.title ? '#B3261E' : '#6B6258',
+sourceStyle: field(e.source),
+sourceHelp: e.source ? 'Indica de dónde viene el texto.' : 'Obligatoria para publicar: así cuidamos los derechos de autor.',
+sourceHelpColor: e.source ? '#B3261E' : '#6B6258',
+showErrors: errs > 0,
+errorCount: errs === 1 ? 'el campo marcado' : 'los ' + errs + ' campos marcados',
+hasNotice: s.notice !== '', notice: s.notice,
+choiceUse: s.choice === 'use', choiceOwn: s.choice === 'own',
+justification: s.justification, rights: s.rights,
+justStyle: 'width: 100%; box-sizing: border-box; padding: 10px 12px; border-radius: 6px; background: #FFFFFF; font: inherit; font-size: 15px; color: #2B2622; resize: vertical; ' + (e.just ? 'border: 2px solid #B3261E;' : 'border: 1px solid #D6CBB8;'),
+visListed: s.vis === 'listado', visLink: s.vis === 'enlace',
+confirmLabel: s.choice === 'use' ? 'Usar la publicada' : 'Enviar solicitud',
+flow: steps.map((x, k) => ({
+label: x,
+dot: 'display: block; width: 12px; height: 12px; border-radius: 50%; ' + (k < idx ? 'background: #2F6B3F;' : (k === idx ? 'background: #7A2E3A; box-shadow: 0 0 0 3px #F4E4E7;' : 'background: #FFFFFF; border: 2px solid #D6CBB8; box-sizing: border-box;')),
+text: k === idx ? 'font-weight: 600;' : 'color: #6B6258;'
+})),
+history: history,
+onTitle: (ev) => this.setState({ title: ev.target.value, notice: '' }),
+onText: (ev) => this.setState({ text: ev.target.value, notice: '' }),
+onSource: (ev) => this.setState({ source: ev.target.value, notice: '' }),
+onJust: (ev) => this.setState({ justification: ev.target.value }),
+onRights: (ev) => this.setState({ rights: ev.target.checked }),
+pickUse: () => this.setState({ choice: 'use' }),
+pickOwn: () => this.setState({ choice: 'own' }),
+pickListed: () => this.setState({ vis: 'listado' }),
+pickLink: () => this.setState({ vis: 'enlace' }),
+save: () => this.setState({ notice: 'Cambios guardados.' }),
+openRequest: () => {
+if (s.title.trim() === '' || s.source.trim() === '') { this.setState({ tried: true, notice: '' }); return; }
+this.setState({ tried: false, notice: '', phase: 'request', triedReq: false });
+},
+cancel: () => this.setState({ phase: 'edit', triedReq: false }),
+confirm: () => {
+if (s.choice === '') { this.setState({ triedReq: true }); return; }
+if (s.choice === 'use') { this.setState({ phase: 'reused', notice: 'No enviamos tu solicitud. Puedes agregar "Ángel de la Guarda" a tus rosarios y novenas desde el constructor; tu versión sigue privada.' }); return; }
+if (s.justification.trim() === '' || !s.rights) { this.setState({ triedReq: true }); return; }
+this.setState({ phase: 'sent', notice: 'Solicitud enviada. Te avisaremos por correo cuando un revisor la apruebe o te la devuelva.' });
+}
+};
+}
+}
+</script>
+</body>
+</html>

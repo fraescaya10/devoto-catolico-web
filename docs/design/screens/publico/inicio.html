@@ -1,0 +1,90 @@
+<!doctype html>
+<!--
+  REFERENCIA DE DISEÑO · no es código de producción
+  Pantalla del lienzo: Main.dc.html
+  Ruta en la app: /
+  Cómo leer este archivo y cómo implementarlo: docs/design/AGENTS.md
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Inicio</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#7A2E3A}a:hover{color:#63232E}
+input::placeholder{color:#857B70}
+</style>
+</helmet>
+<div style="min-height: 100vh; box-sizing: border-box; background: #FAF7F2; color: #2B2622; font-family: Inter, system-ui, sans-serif">
+  <dc-import name="PublicHeader" current="inicio" hint-size="100%,69px"></dc-import>
+  <main style="max-width: 1120px; margin: 0 auto; box-sizing: border-box; padding: clamp(32px, 6vw, 72px) clamp(16px, 4vw, 40px) 64px; display: flex; flex-direction: column; gap: 48px">
+    <section style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px">
+      <h1 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: clamp(32px, 5vw, 52px); line-height: 1.15">¿Qué quieres rezar hoy?</h1>
+      <p style="margin: 0; font-size: 18px; color: #6B6258; max-width: 560px">Oraciones, novenas y rosarios para acompañar tu día.</p>
+      <form role="search" style="width: 100%; max-width: 640px; display: flex; flex-direction: column; gap: 8px; text-align: left">
+        <label for="q" style="font-size: 14px; color: #6B6258">Busca oraciones, novenas o rosarios</label>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px">
+          <div style="flex: 1 1 260px; display: flex; align-items: center; gap: 10px; height: 56px; padding: 0 16px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D6CBB8; border-radius: 10px">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B6258" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+            <input id="q" type="search" placeholder="Ej.: oración a San José" style="flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font: inherit; font-size: 17px; color: #2B2622">
+          </div>
+          <a href="/oraciones" style="flex: 0 1 auto; display: flex; align-items: center; justify-content: center; height: 56px; padding: 0 28px; border-radius: 10px; background: #7A2E3A; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none">Buscar</a>
+        </div>
+      </form>
+    </section>
+
+    <a href="/novenas/novena-a-san-judas-tadeo" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; background: #F2EDE4; border-radius: 12px; text-decoration: none; color: #2B2622">
+      <span style="display: flex; flex-direction: column; gap: 4px">
+        <span style="font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #7A2E3A">Continúa donde quedaste</span>
+        <span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; font-weight: 600">Novena a San Judas Tadeo · día 3 de 9</span>
+      </span>
+      <span style="font-size: 15px; font-weight: 600; color: #7A2E3A">Continuar</span>
+    </a>
+
+    <nav aria-label="Secciones" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 16px">
+      <a href="/novenas" style="display: flex; flex-direction: column; gap: 8px; padding: 24px; background: #FFFFFF; border: 1px solid #E3DACB; border-radius: 12px; text-decoration: none; color: #2B2622">
+        <span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 24px; font-weight: 600">Novenas</span>
+        <span style="font-size: 15px; color: #6B6258; line-height: 1.5">Nueve días de oración por una intención, con apertura y cierre.</span>
+        <span style="font-size: 15px; font-weight: 600; color: #7A2E3A">Ver novenas</span>
+      </a>
+      <a href="/rosarios" style="display: flex; flex-direction: column; gap: 8px; padding: 24px; background: #FFFFFF; border: 1px solid #E3DACB; border-radius: 12px; text-decoration: none; color: #2B2622">
+        <span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 24px; font-weight: 600">Rosarios y coronillas</span>
+        <span style="font-size: 15px; color: #6B6258; line-height: 1.5">Paso a paso, a tu ritmo, con los misterios de cada día.</span>
+        <span style="font-size: 15px; font-weight: 600; color: #7A2E3A">Ver rosarios</span>
+      </a>
+      <a href="/oraciones" style="display: flex; flex-direction: column; gap: 8px; padding: 24px; background: #FFFFFF; border: 1px solid #E3DACB; border-radius: 12px; text-decoration: none; color: #2B2622">
+        <span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 24px; font-weight: 600">Oraciones</span>
+        <span style="font-size: 15px; color: #6B6258; line-height: 1.5">Oraciones, jaculatorias, cánticos y relatos.</span>
+        <span style="font-size: 15px; font-weight: 600; color: #7A2E3A">Ver oraciones</span>
+      </a>
+    </nav>
+
+    <section style="display: flex; flex-direction: column; gap: 8px">
+      <h2 style="margin: 0 0 8px; font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 24px">Oraciones frecuentes</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); column-gap: 24px">
+        <a href="/oraciones/oracion-a-san-miguel-arcangel" style="display: flex; align-items: center; min-height: 52px; border-bottom: 1px solid #E3DACB; color: #2B2622; text-decoration: none; font-size: 16px">Padre Nuestro</a>
+        <a href="/oraciones/oracion-a-san-miguel-arcangel" style="display: flex; align-items: center; min-height: 52px; border-bottom: 1px solid #E3DACB; color: #2B2622; text-decoration: none; font-size: 16px">Ave María</a>
+        <a href="/oraciones/oracion-a-san-miguel-arcangel" style="display: flex; align-items: center; min-height: 52px; border-bottom: 1px solid #E3DACB; color: #2B2622; text-decoration: none; font-size: 16px">Gloria</a>
+        <a href="/oraciones/oracion-a-san-miguel-arcangel" style="display: flex; align-items: center; min-height: 52px; border-bottom: 1px solid #E3DACB; color: #2B2622; text-decoration: none; font-size: 16px">Oración a San Miguel Arcángel</a>
+        <a href="/oraciones/oracion-a-san-miguel-arcangel" style="display: flex; align-items: center; min-height: 52px; border-bottom: 1px solid #E3DACB; color: #2B2622; text-decoration: none; font-size: 16px">Salve</a>
+        <a href="/oraciones/oracion-a-san-miguel-arcangel" style="display: flex; align-items: center; min-height: 52px; border-bottom: 1px solid #E3DACB; color: #2B2622; text-decoration: none; font-size: 16px">Ángel de la Guarda</a>
+      </div>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1040}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

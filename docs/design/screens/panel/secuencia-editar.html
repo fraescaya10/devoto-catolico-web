@@ -1,0 +1,159 @@
+<!doctype html>
+<!--
+  REFERENCIA DE DISEÑO · no es código de producción
+  Pantalla del lienzo: SecuenciaEditor.dc.html
+  Ruta en la app: /panel/secuencias/ID
+  Cómo leer este archivo y cómo implementarlo: docs/design/AGENTS.md
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Panel · Constructor de secuencias</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#7A2E3A}a:hover{color:#63232E}
+button:disabled{opacity:.35;cursor:default}
+input::placeholder{color:#857B70}
+</style>
+</helmet>
+<div style="min-height: 100vh; box-sizing: border-box; background: #FAF7F2; color: #2B2622; font-family: Inter, system-ui, sans-serif; display: flex; flex-wrap: wrap">
+  <div style="flex: 1 1 248px; background: #FFFFFF; border-right: 1px solid #E3DACB">
+    <dc-import name="PanelNav" current="secuencias" role="usuario" hint-size="100%,620px"></dc-import>
+  </div>
+
+  <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: clamp(20px, 3vw, 32px) clamp(16px, 3vw, 40px) 40px; display: flex; flex-direction: column; gap: 20px">
+    <nav aria-label="Ruta" style="display: flex; flex-wrap: wrap; gap: 6px; font-size: 14px; color: #6B6258">
+      <a href="/panel/secuencias" style="color: #6B6258">Secuencias</a><span aria-hidden="true">/</span><span aria-current="page">Editar secuencia</span>
+    </nav>
+
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
+      <div style="display: flex; flex-direction: column; gap: 6px; flex: 1 1 360px">
+        <label for="nombre" style="font-size: 14px; font-weight: 600; color: #6B6258">Nombre de la secuencia</label>
+        <input id="nombre" type="text" value="Santo Rosario · Misterios luminosos" style="height: 48px; padding: 0 12px; box-sizing: border-box; border: 1px solid #D6CBB8; border-radius: 6px; background: #FFFFFF; font-family: 'Source Serif 4', Georgia, serif; font-size: 22px; font-weight: 600; color: #2B2622">
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 10px">
+        <button type="button" style="height: 44px; padding: 0 18px; border: 1px solid #D6CBB8; border-radius: 10px; background: #FFFFFF; color: #2B2622; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Guardar</button>
+        <a href="/panel/oraciones/ID-PRIVADA" style="display: flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 10px; background: #7A2E3A; color: #FFFFFF; font-size: 15px; font-weight: 600; text-decoration: none">Solicitar publicación</a>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 14px; color: #6B6258">
+      <span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 13px; background: #EFEAE2; color: #4A443E; font-size: 13px; font-weight: 600"><span aria-hidden="true" style="display: block; width: 7px; height: 7px; border-radius: 50%; background: #6B6258"></span>Privado</span>
+      <span>Solo tú la ves. Dónde se compartirá lo eliges al solicitar la publicación.</span>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+      <section aria-labelledby="items-titulo" style="flex: 999 1 460px; min-width: 0; display: flex; flex-direction: column; gap: 12px; padding: clamp(16px, 2.5vw, 24px); background: #FFFFFF; border: 1px solid #E3DACB; border-radius: 12px">
+        <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px">
+          <h2 id="items-titulo" style="margin: 0; font-size: 17px; font-weight: 600">Orden de la secuencia</h2>
+          <span style="font-size: 14px; color: #6B6258">{{summary}}</span>
+        </div>
+        <span aria-live="polite" style="font-size: 14px; color: #24532F; min-height: 20px">{{announce}}</span>
+        <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px">
+          <sc-for list="{{items}}" as="it" hint-placeholder-count="5">
+            <li style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 12px; border: 1px solid #E3DACB; border-radius: 10px; background: #FAF7F2">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#A89E91" aria-hidden="true" style="flex: 0 0 auto; cursor: grab"><circle cx="9" cy="6" r="1.5"></circle><circle cx="15" cy="6" r="1.5"></circle><circle cx="9" cy="12" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle><circle cx="9" cy="18" r="1.5"></circle><circle cx="15" cy="18" r="1.5"></circle></svg>
+              <span style="flex: 0 0 auto; width: 28px; height: 28px; border-radius: 50%; background: #F2EDE4; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600">{{it.pos}}</span>
+              <span style="flex: 1 1 180px; display: flex; flex-direction: column; gap: 2px; min-width: 0">
+                <span style="font-size: 15px; font-weight: 600">{{it.title}}</span>
+                <span style="font-size: 13px; color: #6B6258">{{it.type}}</span>
+              </span>
+              <span role="group" aria-label="{{it.repsGroup}}" style="display: flex; align-items: center; gap: 4px">
+                <button type="button" aria-label="{{it.decLabel}}" onClick="{{it.dec}}" disabled="{{it.atOne}}" style="width: 36px; height: 36px; border: 1px solid #D6CBB8; border-radius: 8px; background: #FFFFFF; font: inherit; font-size: 18px; cursor: pointer; color: #2B2622">−</button>
+                <span style="min-width: 40px; text-align: center; font-size: 15px; font-weight: 600">× {{it.reps}}</span>
+                <button type="button" aria-label="{{it.incLabel}}" onClick="{{it.inc}}" style="width: 36px; height: 36px; border: 1px solid #D6CBB8; border-radius: 8px; background: #FFFFFF; font: inherit; font-size: 18px; cursor: pointer; color: #2B2622">+</button>
+              </span>
+              <span style="display: flex; gap: 4px">
+                <button type="button" aria-label="{{it.upLabel}}" onClick="{{it.up}}" disabled="{{it.first}}" style="width: 44px; height: 44px; border: 1px solid #D6CBB8; border-radius: 8px; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2B2622" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 15 6-6 6 6"></path></svg></button>
+                <button type="button" aria-label="{{it.downLabel}}" onClick="{{it.down}}" disabled="{{it.last}}" style="width: 44px; height: 44px; border: 1px solid #D6CBB8; border-radius: 8px; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2B2622" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button>
+                <button type="button" aria-label="{{it.removeLabel}}" onClick="{{it.remove}}" style="width: 44px; height: 44px; border: 1px solid #F0B9B5; border-radius: 8px; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B3261E" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+              </span>
+            </li>
+          </sc-for>
+        </ol>
+        <sc-if value="{{empty}}" hint-placeholder-val="{{ false }}">
+          <div style="padding: 24px; border: 1px dashed #D6CBB8; border-radius: 10px; font-size: 15px; color: #6B6258; text-align: center">La secuencia está vacía. Agrega contenido desde la lista.</div>
+        </sc-if>
+      </section>
+
+      <aside aria-labelledby="agregar-titulo" style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 12px; padding: clamp(16px, 2.5vw, 24px); background: #FFFFFF; border: 1px solid #E3DACB; border-radius: 12px">
+        <h2 id="agregar-titulo" style="margin: 0; font-size: 17px; font-weight: 600">Agregar contenido</h2>
+        <label for="buscar-contenido" style="font-size: 13px; color: #6B6258">Tus oraciones y las publicadas por otros</label>
+        <input id="buscar-contenido" type="search" placeholder="Buscar por título" style="height: 44px; padding: 0 12px; box-sizing: border-box; border: 1px solid #D6CBB8; border-radius: 6px; background: #FFFFFF; font: inherit; font-size: 15px; color: #2B2622">
+        <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column">
+          <sc-for list="{{library}}" as="l" hint-placeholder-count="6">
+            <li style="display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 52px; border-bottom: 1px solid #EFE8DC">
+              <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+                <span style="font-size: 15px">{{l.title}}</span>
+                <span style="font-size: 13px; color: #6B6258">{{l.type}}</span>
+              </span>
+              <button type="button" aria-label="{{l.addLabel}}" onClick="{{l.add}}" style="flex: 0 0 auto; height: 36px; padding: 0 12px; border: 1px solid #D6CBB8; border-radius: 8px; background: #FFFFFF; color: #7A2E3A; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Agregar</button>
+            </li>
+          </sc-for>
+        </ul>
+      </aside>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = {
+items: [
+{ id: 1, title: 'Primer misterio: el Bautismo en el Jordán', type: 'Relato', reps: 1 },
+{ id: 2, title: 'Padre Nuestro', type: 'Oración', reps: 1 },
+{ id: 3, title: 'Ave María', type: 'Oración', reps: 10 },
+{ id: 4, title: 'Gloria', type: 'Oración', reps: 1 },
+{ id: 5, title: 'Oración de Fátima', type: 'Jaculatoria', reps: 1 }
+],
+nextId: 6,
+announce: ''
+};
+}
+renderVals() {
+const s = this.state;
+const items = s.items;
+const set = (next, msg) => this.setState({ items: next, announce: msg });
+const swap = (a, b) => { const n = items.slice(); const t = n[a]; n[a] = n[b]; n[b] = t; return n; };
+const total = items.reduce((acc, x) => acc + x.reps, 0);
+const library = [
+['Oración por mi familia', 'Tuya · privada'], ['Señal de la cruz', 'Publicada'], ['Credo', 'Publicada'], ['Padre Nuestro', 'Publicada'], ['Ave María', 'Publicada'], ['Salve', 'Publicada']
+];
+return {
+summary: items.length + (items.length === 1 ? ' ítem · ' : ' ítems · ') + total + ' oraciones al rezarla',
+announce: s.announce,
+empty: items.length === 0,
+items: items.map((x, k) => ({
+pos: k + 1, title: x.title, type: x.type, reps: x.reps,
+first: k === 0, last: k === items.length - 1, atOne: x.reps <= 1,
+repsGroup: 'Repeticiones de ' + x.title,
+decLabel: 'Quitar una repetición de ' + x.title,
+incLabel: 'Agregar una repetición de ' + x.title,
+upLabel: 'Subir ' + x.title,
+downLabel: 'Bajar ' + x.title,
+removeLabel: 'Quitar ' + x.title + ' de la secuencia',
+up: () => set(swap(k, k - 1), x.title + ' pasó a la posición ' + k + '.'),
+down: () => set(swap(k, k + 1), x.title + ' pasó a la posición ' + (k + 2) + '.'),
+remove: () => set(items.filter((y) => y.id !== x.id), x.title + ' se quitó de la secuencia.'),
+inc: () => set(items.map((y) => y.id === x.id ? Object.assign({}, y, { reps: y.reps + 1 }) : y), x.title + ': ' + (x.reps + 1) + ' repeticiones.'),
+dec: () => set(items.map((y) => y.id === x.id ? Object.assign({}, y, { reps: Math.max(1, y.reps - 1) }) : y), x.title + ': ' + Math.max(1, x.reps - 1) + ' repeticiones.')
+})),
+library: library.map((l) => ({
+title: l[0], type: l[1],
+addLabel: 'Agregar ' + l[0] + ' al final',
+add: () => this.setState({ items: items.concat([{ id: s.nextId, title: l[0], type: l[1], reps: 1 }]), nextId: s.nextId + 1, announce: l[0] + ' se agregó en la posición ' + (items.length + 1) + '.' })
+}))
+};
+}
+}
+</script>
+</body>
+</html>

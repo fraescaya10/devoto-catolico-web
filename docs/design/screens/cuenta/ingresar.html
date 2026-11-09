@@ -1,0 +1,75 @@
+<!doctype html>
+<!--
+  REFERENCIA DE DISEÑO · no es código de producción
+  Pantalla del lienzo: Login.dc.html
+  Ruta en la app: /ingresar
+  Cómo leer este archivo y cómo implementarlo: docs/design/AGENTS.md
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Ingresar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#7A2E3A}a:hover{color:#63232E}
+</style>
+</helmet>
+<div style="min-height: 100vh; box-sizing: border-box; background: #FAF7F2; color: #2B2622; font-family: Inter, system-ui, sans-serif">
+  <dc-import name="PublicHeader" current="ninguno" hint-size="100%,69px"></dc-import>
+  <main style="box-sizing: border-box; padding: clamp(32px, 6vw, 72px) 16px 64px; display: flex; justify-content: center">
+    <div style="width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 20px">
+      <sc-if value="{{expired}}" hint-placeholder-val="{{ false }}">
+        <div role="status" style="padding: 12px 16px; background: #FBEFD9; border: 1px solid #EBCF9A; border-radius: 10px; color: #5E3904; font-size: 15px">Tu sesión expiró. Vuelve a ingresar para continuar donde estabas.</div>
+      </sc-if>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <h1 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 34px">Ingresar</h1>
+        <p style="margin: 0; font-size: 16px; color: #6B6258">Entra a tu espacio para crear y compartir oraciones, rosarios y novenas.</p>
+      </div>
+      <form style="display: flex; flex-direction: column; gap: 16px; padding: clamp(20px, 4vw, 28px); background: #FFFFFF; border: 1px solid #E3DACB; border-radius: 12px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="correo" style="font-size: 15px; font-weight: 600">Correo electrónico</label>
+          <input id="correo" type="email" autocomplete="email" style="height: 48px; padding: 0 12px; box-sizing: border-box; border: 1px solid #D6CBB8; border-radius: 6px; background: #FFFFFF; font: inherit; font-size: 16px; color: #2B2622">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px">
+            <label for="clave" style="font-size: 15px; font-weight: 600">Contraseña</label>
+            <a href="/recuperar" style="font-size: 14px">¿Olvidaste tu contraseña?</a>
+          </div>
+          <div style="display: flex; gap: 8px">
+            <input id="clave" type="{{pwType}}" autocomplete="current-password" style="flex: 1; min-width: 0; height: 48px; padding: 0 12px; box-sizing: border-box; border: 1px solid #D6CBB8; border-radius: 6px; background: #FFFFFF; font: inherit; font-size: 16px; color: #2B2622">
+            <button type="button" onClick="{{togglePw}}" aria-pressed="{{pwShown}}" style="height: 48px; padding: 0 14px; border: 1px solid #D6CBB8; border-radius: 6px; background: #FFFFFF; color: #2B2622; font: inherit; font-size: 14px; cursor: pointer">{{pwLabel}}</button>
+          </div>
+        </div>
+        <a href="/panel" style="display: flex; align-items: center; justify-content: center; height: 52px; border-radius: 10px; background: #7A2E3A; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none">Ingresar</a>
+      </form>
+      <p style="margin: 0; font-size: 15px; text-align: center">¿No tienes cuenta? <a href="/registro" style="font-weight: 600">Crea una gratis</a></p>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"sesionExpirada":{"editor":"boolean","default":false},"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { shown: false };
+}
+renderVals() {
+const shown = this.state.shown;
+return {
+expired: this.props.sesionExpirada ?? false,
+pwType: shown ? 'text' : 'password',
+pwShown: shown,
+pwLabel: shown ? 'Ocultar' : 'Mostrar',
+togglePw: () => this.setState({ shown: !shown })
+};
+}
+}
+</script>
+</body>
+</html>

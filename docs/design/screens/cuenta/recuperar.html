@@ -1,0 +1,78 @@
+<!doctype html>
+<!--
+  REFERENCIA DE DISEÑO · no es código de producción
+  Pantalla del lienzo: Recuperar.dc.html
+  Ruta en la app: /recuperar
+  Cómo leer este archivo y cómo implementarlo: docs/design/AGENTS.md
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Recuperar contraseña</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#7A2E3A}a:hover{color:#63232E}
+</style>
+</helmet>
+<div style="min-height: 100vh; box-sizing: border-box; background: #FAF7F2; color: #2B2622; font-family: Inter, system-ui, sans-serif">
+  <dc-import name="PublicHeader" current="ninguno" hint-size="100%,69px"></dc-import>
+  <main style="box-sizing: border-box; padding: clamp(32px, 6vw, 72px) 16px 64px; display: flex; justify-content: center">
+    <div style="width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 20px">
+      <sc-if value="{{form}}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; flex-direction: column; gap: 20px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <h1 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 34px">Recuperar contraseña</h1>
+            <p style="margin: 0; font-size: 16px; color: #6B6258; line-height: 1.5">Escribe el correo de tu cuenta y te enviaremos un enlace para crear una contraseña nueva.</p>
+          </div>
+          <form style="display: flex; flex-direction: column; gap: 16px; padding: clamp(20px, 4vw, 28px); background: #FFFFFF; border: 1px solid #E3DACB; border-radius: 12px">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="correo" style="font-size: 15px; font-weight: 600">Correo electrónico</label>
+              <input id="correo" type="email" autocomplete="email" value="{{email}}" onChange="{{onEmail}}" aria-invalid="{{err}}" aria-describedby="correo-ayuda" style="{{fieldStyle}}">
+              <sc-if value="{{err}}" hint-placeholder-val="{{ false }}">
+                <span id="correo-ayuda" style="font-size: 13px; color: #B3261E">Escribe un correo válido.</span>
+              </sc-if>
+            </div>
+            <div role="img" aria-label="Verificación anti-bots" style="display: flex; align-items: center; justify-content: center; height: 64px; border: 1px dashed #D6CBB8; border-radius: 8px; font-size: 14px; color: #6B6258">[Verificación anti-bots]</div>
+            <button type="button" onClick="{{submit}}" style="height: 52px; border: 0; border-radius: 10px; background: #7A2E3A; color: #FFFFFF; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer">Enviar enlace</button>
+          </form>
+          <p style="margin: 0; font-size: 15px; text-align: center"><a href="/ingresar" style="font-weight: 600">Volver a ingresar</a></p>
+        </div>
+      </sc-if>
+      <sc-if value="{{sent}}" hint-placeholder-val="{{ false }}">
+        <div role="status" style="display: flex; flex-direction: column; gap: 14px; padding: clamp(24px, 4vw, 32px); background: #FFFFFF; border: 1px solid #E3DACB; border-radius: 12px">
+          <h1 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 30px">Revisa tu correo</h1>
+          <p style="margin: 0; font-size: 16px; line-height: 1.6">Si existe una cuenta con <strong style="font-weight: 600">{{email}}</strong>, te enviamos un enlace para crear una contraseña nueva. Vence en 1 hora.</p>
+          <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #6B6258">¿No llega? Revisa la carpeta de spam o vuelve a intentarlo en unos minutos.</p>
+          <a href="/ingresar" style="align-self: flex-start; display: flex; align-items: center; height: 48px; padding: 0 20px; border-radius: 10px; background: #7A2E3A; color: #FFFFFF; font-size: 15px; font-weight: 600; text-decoration: none">Volver a ingresar</a>
+        </div>
+      </sc-if>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { email: '', tried: false, sent: false };
+}
+renderVals() {
+const s = this.state;
+const err = s.tried && s.email.indexOf('@') < 1;
+return {
+form: !s.sent, sent: s.sent, email: s.email, err: err,
+fieldStyle: 'height: 48px; padding: 0 12px; box-sizing: border-box; border-radius: 6px; background: #FFFFFF; font: inherit; font-size: 16px; color: #2B2622; ' + (err ? 'border: 2px solid #B3261E;' : 'border: 1px solid #D6CBB8;'),
+onEmail: (ev) => this.setState({ email: ev.target.value }),
+submit: () => this.setState(s.email.indexOf('@') < 1 ? { tried: true } : { sent: true })
+};
+}
+}
+</script>
+</body>
+</html>
